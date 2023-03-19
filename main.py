@@ -11,3 +11,5 @@ print(addN(a,b))
 
 
 print("Hello")
+
+print("George kalispera. checkare tin allagi")
