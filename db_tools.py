@@ -2,7 +2,7 @@
 import mysql.connector as MYSQL
 
 
-#open conn with the db fuct
+#open conn with the db func
 def open_connection():
     try:
         return MYSQL.connect(

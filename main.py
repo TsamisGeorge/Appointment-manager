@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
-from graphical_user_interface import *
+from gui2 import *
 
 app = Appointment_manager()
 app.start()
