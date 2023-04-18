@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
+import tkinter.messagebox as messagebox
 from tkcalendar import *
 from db_tools import *
 from datetime import *
-
+from email_validator import validate_email, EmailNotValidError
 class Appointment_manager:
     def __init__(self):
         #main app window
@@ -65,26 +66,40 @@ class Appointment_manager:
         self.date_picker.place(x=12, y=300)
         self.date_picker.config(background='Steel Blue', foreground='black')
 
-        #button for hours
-        self.time_picker_label = tk.Label(self.new_apt, text = "Pick appointment time: ", font=("Segoe UI", 11))
+        #appointment time picker
+        self.time_picker_label = tk.Label(self.new_apt, text = "Pick Appointmen Time: ", font=("Segoe UI", 11))
         self.time_picker_label.place(x = 252, y =294)
         hour = 24 -(24-datetime.now().hour)
         time_var = tk.StringVar()
         self.time_picker = ttk.Combobox(self.new_apt, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
         self.time_picker.place(x = 260, y =330)
         
+        #appointment duration picker
+        self.time_picker_label2 = tk.Label(self.new_apt, text = "Pick Appointment Duration: ", font=("Segoe UI", 11))
+        self.time_picker_label2.place(x = 252, y =380)
+        time_var2 = tk.StringVar()
+        self.time_picker2 = ttk.Combobox(self.new_apt, textvariable=time_var2, values=[f"{m}" for m in range(20, 60+1, 10)])
+        self.time_picker2.place(x = 260, y =416)
+
         #button to set date
         self.date_button = tk.Button(self.new_apt,width=28,bg='Steel Blue', font=("Segoe UI", 11), text = "Set Date", command = self.get_date)
         self.date_button.place(x= 11, y = 490)
 
+        #button to get client credentials
         self.contact_info_button = tk.Button(self.new_apt,height = 1,width= 20, bg='Steel Blue', font = ("Segoe UI",10), text = "Set Contact Info", command = self.get_contact_info)
         self.contact_info_button.place(x=250, y=200)
+
+        #button to sumbit an appointment and start the logic testing
+        self.sumbit_apt_button = tk.Button(self.new_apt,bg='Steel Blue', font = ("Segoe UI",12), text = "Submit", width=16, command = self.submit)
+        self.sumbit_apt_button.place(x = 255, y = 460)
+
+
         #opening the database connection
         self.connection = open_connection()
 
         #mainloop
         self.main_window.mainloop()
-
+    
     ##could need refactoring later
     def get_date(self):
         date_string = f'{self.date_picker.selection_get()}'
@@ -111,7 +126,27 @@ class Appointment_manager:
         surname = self.surname_entry.get()
         email = self.email_entry.get()
         phone_number = self.phone_number_entry.get()
-        print(f"Contact info: {name} {surname} {email} {phone_number}")
+        print(f"Contact info: {name} {surname} {email} {phone_number} ")
+    
+
+    def submit(self):
+        user_submit_input = messagebox.askyesno(title="Confirmation", message='Are you sure you want to submit this appointment?')
+        if user_submit_input:
+            try:
+                name = self.first_name_entry.get().lstrip().rstrip()
+                if not name.isalpha():
+                    raise ValueError(f"'{name}' is not a valid name.")
+                surname = self.surname_entry.get().lstrip().rstrip()
+                if not surname.isalpha():
+                    raise ValueError(f"'{surname}' is not a valid surname.")
+                email = self.email_entry.get()
+                if not validate_email(email).email:
+                    raise ValueError(f"'{email}' is not a valid email.")
+            except ValueError as e:
+                messagebox.showwarning(title = "Invalid Input", message=f"{e}")
+                
+            #print(f'''{name} {surname} {self.email_entry.get()} {self.phone_number_entry.get()} {self.date_picker.selection_get()} {self.time_picker.get()} {self.time_picker2.get()}''')
+
 
 
     #IGNORE FOR NOW  

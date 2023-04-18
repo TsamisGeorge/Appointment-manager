@@ -1,6 +1,6 @@
 
 import mysql.connector as MYSQL
-
+import smtplib
 
 #open conn with the db func
 def open_connection():
@@ -83,4 +83,3 @@ def delete_query(connector, query):
     cursor = connector.cursor()
     cursor.execute(query)
     cursor.close()
-    

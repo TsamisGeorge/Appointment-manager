@@ -1,14 +1,34 @@
 import tkinter as tk
-import tkinter.ttk as ttk
-from datetime import *
 
-time = datetime.now()
 root = tk.Tk()
-hour = 24 -(24-time.hour)
-print(hour)
-time_var = tk.StringVar()
-#time_picker = ttk.Combobox(root, textvariable=time_var, values=['{:02d}:{:02d}'.format(h, m) for h in range(24 - int(time.hour)) for m in range(int(time.hour), 60, 10)])
-time_picker = ttk.Combobox(root, textvariable = time_var, values = [f'{str(h).zfill(2)}:{str(m).zfill(2)}' for h in range (hour+1,24) for m in range(0,60,10)])
-time_picker.pack()
+
+# create a list of options for the first selection widget
+options_1 = ['Option 1', 'Option 2', 'Option 3']
+
+# create a dictionary of possible options for the second selection widget
+options_2 = {
+    'Option 1': ['A', 'B', 'C'],
+    'Option 2': ['X', 'Y', 'Z'],
+    'Option 3': ['1', '2', '3']
+}
+
+# create the first selection widget
+var_1 = tk.StringVar(value=options_1[0])
+widget_1 = tk.OptionMenu(root, var_1, *options_1)
+widget_1.pack()
+
+# create the second selection widget
+var_2 = tk.StringVar(value=options_2[options_1[0]][0])
+widget_2 = tk.OptionMenu(root, var_2, *options_2[var_1.get()])
+widget_2.pack()
+
+# function to update options for widget_2 when widget_1 is changed
+def update_options(*args):
+    widget_2['menu'].delete(0, 'end')
+    for option in options_2[var_1.get()]:
+        widget_2['menu'].add_command(label=option, command=tk._setit(var_2, option))
+
+# bind the update_options function to changes in widget_1
+var_1.trace('w', update_options)
 
 root.mainloop()
