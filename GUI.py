@@ -100,7 +100,7 @@ class Appointment_manager:
         self.search_customer_entry = tk.Entry(self.appointments_tab, width= 50)
         self.search_customer_entry.place(x=12, y=60)
         self.search_customer_button = tk.Button(self.appointments_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer)
-        self.search_customer_button.place(x=320, y=56)
+        self.search_customer_button.place(x=320, y=55)
 
         today = date.today()
         self.date_picker = Calendar(self.appointments_tab, selectmode='day', showweeknumbers=False, showothermonth=False, font=("Segoe UI", 10), mindate = today)
@@ -143,6 +143,10 @@ class Appointment_manager:
     def search_customer(self):
         prompt = self.search_customer_entry.get()
         print(prompt)
+
+
+
+        
     def get_date(self):
         date_string = f'{self.date_picker.selection_get()}'
         date_format = '%Y-%m-%d'
@@ -164,16 +168,6 @@ class Appointment_manager:
 
     #NEEDS REFACTORING
     def get_contact_info(self):
-        name = self.first_name_entry.get()
-        surname = self.surname_entry.get()
-        email = self.email_entry.get()
-        phone_number = self.phone_number_entry.get()
-        print(f"Contact info: {name} {surname} {email} {phone_number} ")
-    
-
-    def submit(self):
-        user_submit_input = messagebox.askyesno(title="Confirmation", message='Are you sure you want to submit this appointment?')
-        if user_submit_input:
             try:
                 name = self.first_name_entry.get().lstrip().rstrip()
                 if not name.isalpha():
@@ -188,6 +182,28 @@ class Appointment_manager:
                 phone_number = self.phone_number_entry.get().lstrip().rstrip()
                 if not phone_number.isalnum() or len(phone_number) != 10:
                     raise ValueError(f"'{phone_number}' is not a valid phone number.")
+            except ValueError as e:
+                messagebox.showwarning(title = "Invalid Input", message=f"{e}")
+            fetch_query = f"SELECT * FROM Clients WHERE phone_number = '{phone_number}' OR email = '{email}'"
+            fetch_results = fetch_all_dict_list(self.connection, fetch_query)
+            print(fetch_results)
+            if fetch_results:
+                messagebox.showinfo(title="Customer exists",message=f"Customer {fetch_results[0]['first_name']} {fetch_results[0]['last_name']} already exists")
+            else:
+                print("Done")
+                last_entry_query = f"SELECT client_id FROM Clients ORDER BY client_id desc LIMIT 1"
+                last_entry_id = fetch_all_dict_list(self.connection, last_entry_query)
+                print(last_entry_id[0]['client_id'])
+                inserting_query = f"INSERT INTO Clients(client_id, first_name, last_name, phone_number, email) VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
+                id = insert_query(self.connection, inserting_query)
+                self.connection.commit()
+                messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
+    
+
+    def submit(self):
+        user_submit_input = messagebox.askyesno(title="Confirmation", message='Are you sure you want to submit this appointment?')
+        if user_submit_input:
+            try:
                 selected_date = self.date_picker.selection_get()
                 selected_time = self.time_picker.get() + ":00"
                 time_format = "%H:%M:%S"
@@ -199,4 +215,3 @@ class Appointment_manager:
             except ValueError as e:
                 messagebox.showwarning(title = "Invalid Input", message=f"{e}")
             
-            print(f"{name} {surname} {email} {phone_number} {apt_date} {apt_duration}")

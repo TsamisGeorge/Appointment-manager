@@ -58,18 +58,8 @@ def fetch_all_tuple_list(connector, query):
 def insert_query(connector, query):
     cursor = connector.cursor()
     cursor.execute(query)
-    #setting the local variable last_row_id as None
-    last_row_id = None
-    #if there is a primary key, with autoincrement(whenever a new entry is made, it raises the value of the primary key by a set amount)
-    #and then cursor.lastrowid has the value of the last entry that we just made
-    #if cursor.lastrowid is not none then we assign its value to last_row_id
-    if cursor.lastrowid:
-        last_row_id = cursor.lastrowid
     #close the cursor
     cursor.close()
-    #return last row id whether it's none or it has a value 
-    return last_row_id
-
 
 
 #abstract name to basic operation of cursor execution
