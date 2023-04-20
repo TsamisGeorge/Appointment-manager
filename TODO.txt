@@ -1,3 +1,10 @@
+////
+TEMP 
+make create apppointment, only if a customer is selected successfully
+
+
+
+
 
 /////////
 APPOINTMENTS TAB
@@ -19,8 +26,7 @@ delete appointment, box type validation for deletion of a picked date after sear
 
 
 ///////
-CUSTOMERS TAB
-that is the create customer side 
+CUSTOMERS TAB 
 make delete
 update
 and search for customers in order to choose to update them
