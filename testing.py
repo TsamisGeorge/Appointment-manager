@@ -1,14 +1,20 @@
 import tkinter as tk
-import tkinter.messagebox as messagebox
 
 root = tk.Tk()
 
-# update the string variable (and the label) when a button is clicked
-def valid():
-    validation = messagebox.askyesno("Title", message= "Temp")
-    print(validation)
+string = "world"
+string2 = "Hello, "
+string3 = string
 
-button = tk.Button(root, text="Click me!", command=valid)
-button.pack()
+label = tk.Label(root, text=f"{string2}{string3}", font=("Arial", 12))
+label.pack()
+
+label.config(justify="left")
+
+label.config(compound="left")
+
+label.config(fg="black")
+
+label.config(font=("Arial", 12, "bold"), anchor="w", width=30)
 
 root.mainloop()

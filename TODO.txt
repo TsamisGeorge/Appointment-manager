@@ -1,6 +1,6 @@
 ////
 TEMP 
-make create apppointment, only if a customer is selected successfully
+make it so that when a customer is picked successfully, it shows the customers appointments in a listbox kind of style 
 
 
 

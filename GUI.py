@@ -10,7 +10,8 @@ from PIL import Image, ImageTk
 
 class Appointment_manager:
     def __init__(self):
-        #main app window
+        #     MAIN WINDOW    #
+        ######################
         self.main_window = tk.Tk()
         self.main_window.geometry("1000x600")
         self.main_window.title("Appointment Manager")
@@ -18,20 +19,25 @@ class Appointment_manager:
         self.main_window.iconphoto(True, icon)
 
 
-        #making the notebook object to hold the tabs of the app
+        # TAB HANDLER ATTACHED TO THE MAIN WINDOW #
+        ###########################################
         self.notebook = ttk.Notebook(self.main_window)
-        notebook_style = ttk.Style()
-        notebook_style.configure('TNotebook.Tab', font=('Segoe UI', 12), padding=[18, 2])
+        style = ttk.Style()
+        style.theme_use("default")
+        style.configure("TNotebook.Tab", font=("Segoe UI", 12, "bold"), foreground="blue", width=16, height=10)
         self.notebook.place(x=0, y=0, relwidth=1, relheight=1)
 
-        #making the frames that will go to the notebook as tabs
+        #     FRAMES FOR THE TAB HANDLER    #
+        #####################################
         self.appointments_tab = tk.Frame(self.notebook)
         self.customers_tab = tk.Frame(self.notebook)
         self.search_tab = tk.Frame(self.notebook)
         self.print_apt = tk.Frame(self.notebook)
 
     def start(self):
-        #ICONS FOR TABS
+        #   ICONS FOR TABS   #
+        ######################
+
 
         #Appointments tab
         appointments_icon = Image.open("pics/appointment.png")
@@ -50,21 +56,97 @@ class Appointment_manager:
         print_apt_icon = print_apt_icon.resize((26,26), Image.ANTIALIAS)
         print_apt_icon = ImageTk.PhotoImage(print_apt_icon)
         
-        #ICONS FOR THINGS IN APPOINTMENTS TAB
+        # ICONS FOR THINGS IN APPOINTMENTS TAB #
+        ########################################
 
         #searching customer img
         searching_customer_img = Image.open("pics/searching.png")
         searching_customer_img = searching_customer_img.resize((26,26), Image.ANTIALIAS)
         searching_customer_img = ImageTk.PhotoImage(searching_customer_img)
 
-        #ADDING THE TABS TO THE notebook
+
+
+        # ICONS FOR THINGS IN CUSTOMERS TAB #
+        #####################################
+        #TEMP EMPTY
+
+        # ADDING THE TABS TO THE TAB MANAGER #
+        ######################################
         self.notebook.add(self.appointments_tab, text="Appointments", image=appointments_icon, compound='left')
         self.notebook.add(self.customers_tab, text="Customers", image=customers_icon, compound='left')
         self.notebook.add(self.search_tab, text="Search", image=search_icon, compound='left')   
         self.notebook.add(self.print_apt, text="Print appointments", image=print_apt_icon, compound='left')
 
-        #####WIDGETS INSIDE THE CUSTOMERS TAB
+###          APPOINTMENT TAB WIDGETS
+##################################################################################################################################################################################################
+        #Label, Button and Entry to search a customer and also print the customers appointments below
+        self.search_customer_label = tk.Label(self.appointments_tab, text = "Search Customer", font=("Segoe UI", 12))
+        self.search_customer_label.place(x=92,y=10)
+        self.prompt_label = tk.Label(self.appointments_tab, text = "Enter customers phone number or email", font=("Segoe UI", 12))
+        self.prompt_label.place(x=24,y=30)
+        self.search_customer_entry = tk.Entry(self.appointments_tab, width= 50)
+        self.search_customer_entry.place(x=12, y=60)
+        self.search_customer_button = tk.Button(self.appointments_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer)
+        self.search_customer_button.place(x=320, y=55)
+        self.search_customer_entry.bind("<Return>", self.search_customer_enter)
 
+        #string vars that are used to update labels of chosen customers/appointments etc
+        self.selected_customer_full_name = tk.StringVar()
+        self.selected_customer_full_name.set("None")
+        self.selected_customer_phone_number = None
+
+        ##Labels to show which customer is selected
+        self.selected_customer_static_text = tk.Label(self.appointments_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
+        self.selected_customer_static_text.place(x=12,y=80)
+        self.picked_customer_label = tk.Label(self.appointments_tab, textvariable=self.selected_customer_full_name, font=("Segoe UI", 12, "bold"))
+        self.picked_customer_label.place(x = 150, y = 80)
+
+        ##Label and listbox for the selected customers appointments
+        self.selected_customer_appointments_label = tk.Label(self.appointments_tab, text = "Selected Customer Appointments", font=("Segoe UI", 12))
+        self.selected_customer_appointments_label.place(x=12,y=110)
+
+        self.selected_customer_appointments_listbox = tk.Listbox(self.appointments_tab, font=("Segoe UI", 10), width=32,height=6)
+        self.selected_customer_appointments_listbox.place(x=12,y=140)
+
+        #scrollbar for the listbox
+        self.scrollbar = tk.Scrollbar(self.appointments_tab, orient="vertical", background="red", troughcolor="blue")
+        self.scrollbar.config(command=self.selected_customer_appointments_listbox.yview)
+        self.scrollbar.place(x=246, y=140, height=110)
+        self.selected_customer_appointments_listbox.config(yscrollcommand=self.scrollbar.set)
+
+
+        #date picker
+        today = date.today()
+        self.date_picker = Calendar(self.appointments_tab, selectmode='day', showweeknumbers=False, showothermonth=False, font=("Segoe UI", 10), mindate = today)
+        self.date_picker.place(x=12, y=300)
+        self.date_picker.config(background='Steel Blue', foreground='black')
+
+        #appointment time picker
+        self.time_picker_label = tk.Label(self.appointments_tab, text = "Appointment Time", font=("Segoe UI", 11))
+        self.time_picker_label.place(x = 260, y =294)
+        hour = 24 -(24-datetime.now().hour)
+        time_var = tk.StringVar()
+        self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
+        self.time_picker.place(x = 260, y =330)
+        self.time_picker.configure(state="readonly")
+
+        #updating the time of the time picker according to the calendar selection every time there is any new calendar selection
+        self.date_picker.bind("<<CalendarSelected>>", self.update_time_picker)
+        
+        #appointment duration picker
+        self.time_picker_label2 = tk.Label(self.appointments_tab, text = "Appointment Duration", font=("Segoe UI", 11))
+        self.time_picker_label2.place(x = 252, y =366)
+        time_var2 = tk.StringVar()
+        self.time_picker2 = ttk.Combobox(self.appointments_tab, textvariable=time_var2, values=[f"{m}" for m in range(20, 60+1, 10)])
+        self.time_picker2.place(x = 260, y =400)
+        self.time_picker2.configure(state="readonly")
+
+        #button to sumbit an appointment and start the logic testing
+        self.create_apt_button = tk.Button(self.appointments_tab,bg='Steel Blue', font = ("Segoe UI",12), text = "Create Appointment", command = self.create_appointment, state="disabled")
+        self.create_apt_button.place(x = 252, y = 440)
+
+###            CUSTOMERS TAB WIDGETS
+##################################################################################################################################################################################################
         #adding the labels and entry boxes to the customers_tab
         self.first_name_label = tk.Label(self.customers_tab, text = "First name: ", font=("Segoe UI", 12))
         self.first_name_entry = tk.Entry(self.customers_tab, width=50)
@@ -90,85 +172,58 @@ class Appointment_manager:
         self.contact_info_button = tk.Button(self.customers_tab,height = 1,width= 20, bg='Steel Blue', font = ("Segoe UI",10), text = "Set Contact Info", command = self.get_contact_info)
         self.contact_info_button.place(x=250, y=200)
 
-        ##### WIDGETS INSIDE THE APPOINTMENTS TAB
-
-        #Label, Button and Entry to search a customer and also print the customers appointments below
-        self.search_customer_label = tk.Label(self.appointments_tab, text = "Search Customer", font=("Segoe UI", 12))
-        self.search_customer_label.place(x=92,y=10)
-        self.prompt_label = tk.Label(self.appointments_tab, text = "Enter customers phone number or email", font=("Segoe UI", 12))
-        self.prompt_label.place(x=24,y=30)
-        self.search_customer_entry = tk.Entry(self.appointments_tab, width= 50)
-        self.search_customer_entry.place(x=12, y=60)
-        self.search_customer_button = tk.Button(self.appointments_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer)
-        self.search_customer_button.place(x=320, y=55)
-        self.search_customer_entry.bind("<Return>", self.search_customer_enter)
-
-        #string vars that are used to update labels of chosen customers/appointments etc
-        self.selected_customer_full_name = tk.StringVar()
-        self.selected_customer_full_name.set("Selected Customer: None")
-        self.selected_customer_phone_number = None
-        ##Label to show which customer is picked
-        self.picked_customer_label = tk.Label(self.appointments_tab, textvariable=self.selected_customer_full_name, font=("Segoe UI", 11))
-        self.picked_customer_label.place(x = 12, y = 80)
-
-        #date picker
-        today = date.today()
-        self.date_picker = Calendar(self.appointments_tab, selectmode='day', showweeknumbers=False, showothermonth=False, font=("Segoe UI", 10), mindate = today)
-        self.date_picker.place(x=12, y=300)
-        self.date_picker.config(background='Steel Blue', foreground='black')
-
-        #appointment time picker
-        self.time_picker_label = tk.Label(self.appointments_tab, text = "Pick Appointment Time ", font=("Segoe UI", 11))
-        self.time_picker_label.place(x = 252, y =294)
-        hour = 24 -(24-datetime.now().hour)
-        time_var = tk.StringVar()
-        self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
-        self.time_picker.place(x = 260, y =330)
-        
-        #appointment duration picker
-        self.time_picker_label2 = tk.Label(self.appointments_tab, text = "Pick Appointment Duration ", font=("Segoe UI", 11))
-        self.time_picker_label2.place(x = 252, y =380)
-        time_var2 = tk.StringVar()
-        self.time_picker2 = ttk.Combobox(self.appointments_tab, textvariable=time_var2, values=[f"{m}" for m in range(20, 60+1, 10)])
-        self.time_picker2.place(x = 260, y =416)
-
-        #button to set date
-        self.date_button = tk.Button(self.appointments_tab,width=28,bg='Steel Blue', font=("Segoe UI", 11), text = "Set Date", command = self.set_date)
-        self.date_button.place(x= 11, y = 490)
-
-        #button to sumbit an appointment and start the logic testing
-        self.create_apt_button = tk.Button(self.appointments_tab,bg='Steel Blue', font = ("Segoe UI",12), text = "Create Appointment", command = self.create_appointment, state="disabled")
-        self.create_apt_button.place(x = 255, y = 488)
-
-        #mainloop
+        # TK MAINLOOP #
+        ##############
         self.main_window.mainloop()
     
+###      METHODS TO WORK WITH THE WIDGETS ON THE APPOINTMENT TAB
+##################################################################################################################################################################################################
+    def update_time_picker(self, event):
+        date_string = f'{self.date_picker.selection_get()}'
+        date_format = '%Y-%m-%d'
+        date_obj = datetime.strptime(date_string, date_format).date()
+        
+        if date_obj == datetime.today().date():
+            self.time_picker.destroy()
+            hour = 24 -(24-datetime.now().hour)
+            time_var = tk.StringVar()
+            self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
+            self.time_picker.place(x = 260, y =330)
+            self.time_picker.configure(state="readonly")
+        else:
+            self.time_picker.destroy()
+            hour = 0
+            time_var = tk.StringVar()
+            self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour, 24) for m in range(0, 60, 10)])
+            self.time_picker.place(x = 260, y =330)
+            self.time_picker.configure(state="readonly")
 
-
-    ######FUNCS TO WORK WITH THE WIDGETS ON THE TABS
     def search_customer(self):
         self.connection = open_connection()
         prompt = self.search_customer_entry.get().lstrip().rstrip()
         if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_full_name.set(f"Selected Customer: None")
+            self.selected_customer_full_name.set(f"None")
             self.selected_customer_phone_number = 0
             self.create_apt_button.configure(state="disabled")
+            self.selected_customer_appointments_listbox.delete(0, tk.END)
             close_connection(self.connection)
         else:
             search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             if not search_customer_results:
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_full_name.set(f"Selected Customer: None")
+                self.selected_customer_full_name.set(f"None")
                 self.selected_customer_phone_number = 0
                 self.create_apt_button.configure(state="disabled")
+                self.selected_customer_appointments_listbox.delete(0, tk.END)
                 close_connection(self.connection)
             else:
                 print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
-                self.selected_customer_full_name.set(f"Selected Customer: {search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
+                self.selected_customer_full_name.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number = f"{search_customer_results[0]['phone_number']}"
                 self.create_apt_button.configure(state="normal")
+                self.update_customer_appointments()
                 close_connection(self.connection)
 
     def search_customer_enter(self, event):
@@ -176,27 +231,88 @@ class Appointment_manager:
         prompt = self.search_customer_entry.get().lstrip().rstrip()
         if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_full_name.set(f"Selected Customer: None")
+            self.selected_customer_full_name.set(f"None")
             self.selected_customer_phone_number = 0
             self.create_apt_button.configure(state="disabled")
+            self.selected_customer_appointments_listbox.delete(0, tk.END)
             close_connection(self.connection)
         else:
             search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             if not search_customer_results:
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_full_name.set(f"Selected Customer: None")
+                self.selected_customer_full_name.set(f"None")
                 self.selected_customer_phone_number = 0
                 self.create_apt_button.configure(state="disabled")
+                self.selected_customer_appointments_listbox.delete(0, tk.END)
                 close_connection(self.connection)
             else:
                 print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
-                self.selected_customer_full_name.set(f"Selected Customer: {search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
+                self.selected_customer_full_name.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number = f"{search_customer_results[0]['phone_number']}"
                 self.create_apt_button.configure(state="normal")
+                self.update_customer_appointments()
                 close_connection(self.connection)
 
 
+
+
+    def create_appointment(self):
+        #user_submit_input = messagebox.askyesno(title="Confirmation", message='Are you sure you want to submit this appointment?')
+        selected_date = self.date_picker.selection_get()
+        if not self.time_picker.get():
+            messagebox.showwarning(title="Missing Parameters", message="You need to choose an appointment time")
+        elif not self.time_picker2.get():
+            messagebox.showwarning(title="Missing Parameters", message="You need to choose an appointment duration")
+        else:
+            selected_time = self.time_picker.get() + ':00'
+            time_format = '%H:%M:%S'
+            selected_time = datetime.strptime(selected_time, time_format).time()
+            apt_date = datetime.combine(selected_date, selected_time)
+            apt_min = timedelta(minutes=int(self.time_picker2.get()))
+            apt_duration = apt_date + apt_min
+            print(apt_date)
+            print(apt_duration)
+            self.connection = open_connection()
+            appointments_query = f'''SELECT * FROM appointments WHERE appointment_date BETWEEN '{apt_date}' AND '{apt_duration}'
+            OR appointment_interval BETWEEN '{apt_date}' AND '{apt_duration}' OR '{apt_date}' BETWEEN appointment_date AND appointment_interval 
+            OR '{apt_duration}' BETWEEN appointment_date AND appointment_interval'''
+            appointmnents_results = fetch_all_dict_list(self.connection, appointments_query)
+            print(appointmnents_results)
+            if not appointmnents_results:
+                current_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number}'"
+                current_customer_results = fetch_all_dict_list(self.connection, current_customer_query)
+                last_appointment_query = f"SELECT appointment_id FROM appointments ORDER BY appointment_id desc LIMIT 1"
+                last_appointment_id = fetch_all_dict_list(self.connection, last_appointment_query)
+                apt_creation_query = f'''INSERT INTO appointments(appointment_id, appointment_date, appointment_interval, client_id) VALUES({last_appointment_id[0]['appointment_id'] + 1},'{apt_date}', '{apt_duration}', {current_customer_results[0]['client_id']})'''
+                validation = messagebox.askyesno("Validation", message= "Are you sure you want to schedule this appointment?")
+                if validation:
+                    insert_query(self.connection, apt_creation_query)
+                    self.connection.commit()
+                    messagebox.showinfo(title="Appointment Scheduled", message = f'''An appointment has been scheduled for customer {current_customer_results[0]['first_name']} {current_customer_results[0]['last_name']} at {apt_date} with duration {int(self.time_picker2.get())} minutes''')
+            else:
+                messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} until {appointmnents_results[0]['appointment_interval']}''')
+            close_connection(self.connection)
+    
+
+    def update_customer_appointments(self):
+        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number}'"
+        self.connection = open_connection()
+        curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
+        curr_customer_appointments_query = f"SELECT * FROM Appointments WHERE client_id = {curr_customer_results[0]['client_id']}"
+        curr_customer_appointments_results = fetch_all_dict_list(self.connection, curr_customer_appointments_query)
+        print(len(curr_customer_appointments_results), curr_customer_appointments_results)
+        if curr_customer_appointments_results:
+            self.selected_customer_appointments_listbox.delete(0, tk.END)
+            for appointment in curr_customer_appointments_results:
+                print("test")
+                self.selected_customer_appointments_listbox.insert(tk.END, f"{appointment['appointment_date']}")
+        else:
+            self.selected_customer_appointments_listbox.delete(0, tk.END)
+        close_connection(self.connection)
+
+### METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB
+#######################################################################################################################################################################################
     def get_contact_info(self):
             try:
                 name = self.first_name_entry.get().lstrip().rstrip()
@@ -235,59 +351,3 @@ class Appointment_manager:
                 self.connection.commit()
                 messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
                 close_connection(self.connection)
-
-    def create_appointment(self):
-        #user_submit_input = messagebox.askyesno(title="Confirmation", message='Are you sure you want to submit this appointment?')
-        selected_date = self.date_picker.selection_get()
-        if not self.time_picker.get():
-            messagebox.showwarning(title="Missing Parameters", message="You need to choose an appointment time")
-        elif not self.time_picker2.get():
-            messagebox.showwarning(title="Missing Parameters", message="You need to choose an appointment duration")
-        else:
-            selected_time = self.time_picker.get() + ':00'
-            time_format = '%H:%M:%S'
-            selected_time = datetime.strptime(selected_time, time_format).time()
-            apt_date = datetime.combine(selected_date, selected_time)
-            apt_min = timedelta(minutes=int(self.time_picker2.get()))
-            apt_duration = apt_date + apt_min
-            print(apt_date)
-            print(apt_duration)
-            self.connection = open_connection()
-            appointments_query = f'''SELECT * FROM appointments WHERE appointment_date BETWEEN '{apt_date}' AND '{apt_duration}'
-            OR appointment_interval BETWEEN '{apt_date}' AND '{apt_duration}' OR '{apt_date}' BETWEEN appointment_date AND appointment_interval 
-            OR '{apt_duration}' BETWEEN appointment_date AND appointment_interval'''
-            appointmnents_results = fetch_all_dict_list(self.connection, appointments_query)
-            print(appointmnents_results)
-            if not appointmnents_results:
-                current_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number}'"
-                current_customer_results = fetch_all_dict_list(self.connection, current_customer_query)
-                last_appointment_query = f"SELECT appointment_id FROM appointments ORDER BY appointment_id desc LIMIT 1"
-                last_appointment_id = fetch_all_dict_list(self.connection, last_appointment_query)
-                apt_creation_query = f'''INSERT INTO appointments(appointment_id, appointment_date, appointment_interval, client_id) VALUES({last_appointment_id[0]['appointment_id'] + 1},'{apt_date}', '{apt_duration}', {current_customer_results[0]['client_id']})'''
-                validation = messagebox.askyesno("Validation", message= "Are you sure you want to schedule this appointment?")
-                if validation:
-                    insert_query(self.connection, apt_creation_query)
-                    self.connection.commit()
-                    messagebox.showinfo(title="Appointment Scheduled", message = f'''An appointment has been scheduled for customer {current_customer_results[0]['first_name']} {current_customer_results[0]['last_name']} at {apt_date} with duration {int(self.time_picker2.get())} minutes''')
-            else:
-                messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} until {appointmnents_results[0]['appointment_interval']}''')
-            close_connection(self.connection)
-            
-    def set_date(self):
-        date_string = f'{self.date_picker.selection_get()}'
-        date_format = '%Y-%m-%d'
-        date_obj = datetime.strptime(date_string, date_format).date()
-        if(date_obj.day == datetime.today().day):
-            #destroy time widget, but make it the same as above, because the hour might have changed
-            self.time_picker.destroy()
-            hour = 24 -(24-datetime.now().hour)
-            time_var = tk.StringVar()
-            self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
-            self.time_picker.place(x = 260, y =330)
-        else:
-            #make widget but make it whole
-            self.time_picker.destroy()
-            hour = 0
-            time_var = tk.StringVar()
-            self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour, 24) for m in range(0, 60, 10)])
-            self.time_picker.place(x = 260, y =330)
