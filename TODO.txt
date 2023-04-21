@@ -1,6 +1,5 @@
 ////
 TEMP 
-make it so that when a customer is picked successfully, it shows the customers appointments in a listbox kind of style 
 
 
 
@@ -8,15 +7,9 @@ make it so that when a customer is picked successfully, it shows the customers a
 
 /////////
 APPOINTMENTS TAB
-make top left be the customer picker and it will show apts of the picked customer
-make down left be the calendar thing
 make top right be the appointment reschuduling
 make down right be appointment deletion
 
-
-pick customer will be a search box to put email or phone number and it will print a specific customer and the customers appointments if there are any
-
-create appointment will be a button on the Appoinments tab, that will be active if you have searched a customer, will bring pop up to tell you if you have not chosen date/time or date/time is taken from another appointment, the x y will be close to top and down left
 
 reschedule appointment, again pop up after validation of times dates etc, if not chosen date after searching customer etc, will take data from the date and time picker
 
