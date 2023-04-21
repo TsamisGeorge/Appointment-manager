@@ -10,16 +10,15 @@ class Appointment_methods():
         if date_obj == datetime.today().date():
             self.time_picker.destroy()
             hour = 24 -(24-datetime.now().hour)
-            time_var = tk.StringVar()
-            self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
-            self.time_picker.place(x = 260, y =330)
+            self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9+hour+1, 24) for m in range(0, 60, 10)])
+            self.time_picker.place(x = 260, y =260)
             self.time_picker.configure(state="readonly")
         else:
             self.time_picker.destroy()
             hour = 0
-            time_var = tk.StringVar()
-            self.time_picker = ttk.Combobox(self.appointments_tab, textvariable=time_var, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour, 24) for m in range(0, 60, 10)])
-            self.time_picker.place(x = 260, y =330)
+            self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9, 21) for m in range(0, 60, 10)])
+            self.time_picker['values'] +=("21:00",)
+            self.time_picker.place(x = 260, y =260)
             self.time_picker.configure(state="readonly")
 
     def search_customer(self):
@@ -29,7 +28,7 @@ class Appointment_methods():
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
             self.selected_customer_full_name.set(f"None")
             self.selected_customer_phone_number = 0
-            self.create_apt_button.configure(state="disabled")
+            self.create_apt_button.configure(state="disabled",relief="sunken")
             self.selected_customer_appointments_listbox.delete(0, tk.END)
             close_connection(self.connection)
         else:
@@ -39,14 +38,14 @@ class Appointment_methods():
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
                 self.selected_customer_full_name.set(f"None")
                 self.selected_customer_phone_number = 0
-                self.create_apt_button.configure(state="disabled")
+                self.create_apt_button.configure(state="disabled",relief="sunken")
                 self.selected_customer_appointments_listbox.delete(0, tk.END)
                 close_connection(self.connection)
             else:
                 print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_full_name.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number = f"{search_customer_results[0]['phone_number']}"
-                self.create_apt_button.configure(state="normal")
+                self.create_apt_button.configure(state="normal",relief="raised")
                 self.update_customer_appointments()
                 close_connection(self.connection)
 
@@ -57,7 +56,7 @@ class Appointment_methods():
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
             self.selected_customer_full_name.set(f"None")
             self.selected_customer_phone_number = 0
-            self.create_apt_button.configure(state="disabled")
+            self.create_apt_button.configure(state="disabled",relief="sunken")
             self.selected_customer_appointments_listbox.delete(0, tk.END)
             close_connection(self.connection)
         else:
@@ -67,14 +66,14 @@ class Appointment_methods():
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
                 self.selected_customer_full_name.set(f"None")
                 self.selected_customer_phone_number = 0
-                self.create_apt_button.configure(state="disabled")
+                self.create_apt_button.configure(state="disabled",relief="sunken")
                 self.selected_customer_appointments_listbox.delete(0, tk.END)
                 close_connection(self.connection)
             else:
                 print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_full_name.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number = f"{search_customer_results[0]['phone_number']}"
-                self.create_apt_button.configure(state="normal")
+                self.create_apt_button.configure(state="normal",relief="raised")
                 self.update_customer_appointments()
                 close_connection(self.connection)
 
@@ -108,7 +107,10 @@ class Appointment_methods():
                 current_customer_results = fetch_all_dict_list(self.connection, current_customer_query)
                 last_appointment_query = f"SELECT appointment_id FROM appointments ORDER BY appointment_id desc LIMIT 1"
                 last_appointment_id = fetch_all_dict_list(self.connection, last_appointment_query)
-                apt_creation_query = f'''INSERT INTO appointments(appointment_id, appointment_date, appointment_interval, client_id) VALUES({last_appointment_id[0]['appointment_id'] + 1},'{apt_date}', '{apt_duration}', {current_customer_results[0]['client_id']})'''
+                if last_appointment_id:
+                    apt_creation_query = f'''INSERT INTO appointments(appointment_id, appointment_date, appointment_interval, client_id) VALUES({last_appointment_id[0]['appointment_id'] + 1},'{apt_date}', '{apt_duration}', {current_customer_results[0]['client_id']})'''
+                else:
+                    apt_creation_query = f'''INSERT INTO appointments(appointment_id, appointment_date, appointment_interval, client_id) VALUES(1,'{apt_date}', '{apt_duration}', {current_customer_results[0]['client_id']})'''
                 validation = messagebox.askyesno("Validation", message= "Are you sure you want to schedule this appointment?")
                 if validation:
                     insert_query(self.connection, apt_creation_query)
@@ -129,8 +131,13 @@ class Appointment_methods():
         if curr_customer_appointments_results:
             self.selected_customer_appointments_listbox.delete(0, tk.END)
             for appointment in curr_customer_appointments_results:
-                print("test")
-                self.selected_customer_appointments_listbox.insert(tk.END, f"{appointment['appointment_date']}")
+                appointment_duration = appointment['appointment_interval'].strftime('%H:%M:%S')
+                self.selected_customer_appointments_listbox.insert(tk.END, f"{appointment['appointment_date'].date()}   {appointment['appointment_date'].time()}  - {appointment_duration}")
         else:
             self.selected_customer_appointments_listbox.delete(0, tk.END)
         close_connection(self.connection)
+
+    def reschedule_apt_command(self):
+        print(1)
+    def delete_apt_command(self):
+        pass
