@@ -7,7 +7,6 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         #     MAIN WINDOW    #
         ######################
         self.main_window = tk.Tk()
-        self.main_window.geometry("1000x560")
         self.main_window.title("Appointment Manager")
         icon = tk.PhotoImage(file="pics/appointment_manager.png")
         self.main_window.iconphoto(True, icon)
@@ -16,9 +15,9 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         window_height = 560
         screen_width = self.main_window.winfo_screenwidth()
         screen_height = self.main_window.winfo_screenheight()
-        x_coordinate = int((screen_width/2) - (window_width/2))
-        y_coordinate = int((screen_height/2) - (window_height/2))
-        self.main_window.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
+        x = int((screen_width/2) - (window_width/2))
+        y = int((screen_height/2) - (window_height/2))
+        self.main_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Set minimum and maximum window size
         self.main_window.minsize(window_width, window_height)
@@ -126,6 +125,7 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         self.selected_customer_appointments_listbox = tk.Listbox(self.appointments_tab, font=("Segoe UI", 10), width=40,height=10)
         self.selected_customer_appointments_listbox.place(x=594,y=106)
+        self.selected_customer_appointments_listbox.bind("<<ListboxSelect>>", self.update_manage_buttons)
 
         #scrollbar for the listbox
         self.scrollbar = tk.Scrollbar(self.appointments_tab, orient="vertical", background="red", troughcolor="blue")
@@ -170,10 +170,11 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.search_customer_label.place(x=624,y=8)
 
         #buttons for rescheduling and deleting apts
-        self.reschedule_apt_button = tk.Button(self.appointments_tab,text="Reschedule", font=("Segoe UI", 11), bg='Steel Blue', command=self.reschedule_apt_command)
+        self.reschedule_apt_button = tk.Button(self.appointments_tab,text="Reschedule", font=("Segoe UI", 11), bg='Steel Blue', relief = "sunken", state="disabled", command=self.reschedule_apt_command)
         self.reschedule_apt_button.place(x=594, y=300)
 
-        self.delete_apt_button = tk.Button(self.appointments_tab,text="Delete", font=("Segoe UI", 11), bg='Steel Blue', command=self.delete_apt_command, width=10)
+
+        self.delete_apt_button = tk.Button(self.appointments_tab,text="Delete", font=("Segoe UI", 11), bg='Steel Blue', relief = "sunken", state="disabled", command=self.delete_apt_command, width=10)
         self.delete_apt_button.place(x=788, y=300)
 
 ###            CUSTOMERS TAB WIDGETS

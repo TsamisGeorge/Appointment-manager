@@ -1,5 +1,5 @@
-### METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB ###
-#############################################################
+###   METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB   ###
+#################################################################
 from appointments_methods import *
 class Customers_methods():
     def get_contact_info(self):
@@ -39,7 +39,7 @@ class Customers_methods():
                     inserting_query1 = f"INSERT INTO Clients(client_id, first_name, last_name, phone_number, email)"
                     inserting_query2 = f" VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
                     final_query = inserting_query1 + inserting_query2
-                insert_query(self.connection, final_query)
+                execute_query(self.connection, final_query)
                 self.connection.commit()
                 messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
                 close_connection(self.connection)
