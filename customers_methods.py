@@ -6,14 +6,14 @@ class Customers_methods():
         valid_info = 0
         try:
             name = self.first_name_entry.get().lstrip().rstrip()
-            if not name.isalpha():
-                raise ValueError(f"'{name}' is not a valid name.")
+            if not name.isalpha() or len(name) > 26:
+                raise ValueError(f"'{name}' is not a valid name.\n")
             surname = self.surname_entry.get().lstrip().rstrip()
-            if not surname.isalpha():
+            if not surname.isalpha() or len(surname) > 26:
                 raise ValueError(f"'{surname}' is not a valid surname.")
             email = self.email_entry.get().rstrip().lstrip()
             #temp validation, could be done with regex and only smtp
-            if not validate_email(email).email:
+            if not validate_email(email).email or len(email)> 50:
                 raise ValueError(f"'{email}' is not a valid email.")
             phone_number = self.phone_number_entry.get().lstrip().rstrip()
             if not phone_number.isalnum() or len(phone_number) != 10:
@@ -42,8 +42,16 @@ class Customers_methods():
                 execute_query(self.connection, final_query)
                 self.connection.commit()
                 messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
+                self.clear_customers_entry()
                 close_connection(self.connection)
     
+    def clear_customers_entry(self):
+        self.first_name_entry.delete(0, tk.END)
+        self.surname_entry.delete(0, tk.END)
+        self.email_entry.delete(0, tk.END)
+        self.phone_number_entry.delete(0, tk.END)
+
+
 
     def search_customer_customers_tab(self, event=None):
         self.connection = open_connection()
@@ -70,11 +78,13 @@ class Customers_methods():
 
     def update_customer_buttons(self):
         if self.selected_customer_phone_number_customers_tab == 0:
+            self.delete_customer_button.configure(state="disabled",relief="sunken")
             self.change_first_name_button.configure(state="disabled", relief="sunken")
             self.change_surname_button.configure(state="disabled", relief="sunken")
             self.change_email_button.configure(state="disabled", relief="sunken")
             self.change_phone_number_button.configure(state="disabled", relief="sunken")
         else:
+            self.delete_customer_button.configure(state="normal",relief="raised")
             self.change_first_name_button.configure(state="normal", relief="raised")
             self.change_surname_button.configure(state="normal", relief="raised")
             self.change_email_button.configure(state="normal", relief="raised")

@@ -1,16 +1,14 @@
 import tkinter as tk
 
-class ButtonReliefs(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.create_widgets()
-
-    def create_widgets(self):
-        reliefs = ['flat', 'raised', 'sunken', 'groove', 'ridge']
-        for r in reliefs:
-            tk.Button(self.master, text=r, relief=r).pack(side='left', padx=5, pady=5)
+def clear_entry():
+    entry.delete(0, tk.END)
 
 root = tk.Tk()
-app = ButtonReliefs(master=root)
-app.mainloop()
+
+entry = tk.Entry(root)
+entry.pack()
+
+button = tk.Button(root, text="Clear", command=clear_entry)
+button.pack()
+
+root.mainloop()

@@ -6,17 +6,10 @@ make the picked customer listbox show only imminent appointments
 
 TEMP
 ////
-the selected customer labels should not be Selected Customer: asdasdas
-but
-Selected Customer
-George Tsamis
-
-put the trash icon next to both labels 
-
-see if pick customer logic works correctly 
+CUSTOMERS TAB
+_____________
 make change selected customer information logic
-make delete logic
-
+make delete a customer, on a picked customer, customer has to not have any appointments 
 
 
 
@@ -24,11 +17,6 @@ make delete logic
 
 FEATURES
 ////////
-
-CUSTOMERS TAB
-_____________
-make update customer and the toplevel window, the update happens on the picked customer
-make delete a customer, on a picked customer, customer has to not have any appointments 
 
 
 //////

@@ -20,8 +20,8 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.main_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Set minimum and maximum window size
-        #self.main_window.minsize(window_width, window_height)
-        #self.main_window.maxsize(window_width, window_height)
+        self.main_window.minsize(window_width, window_height)
+        self.main_window.maxsize(window_width, window_height)
 
 
         # TAB HANDLER ATTACHED TO THE MAIN WINDOW #
@@ -131,10 +131,10 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
 
         ##Labels to show which customer is selected
-        self.selected_customer_text1 = tk.Label(self.appointments_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
+        self.selected_customer_text1 = tk.Label(self.appointments_tab, text = "Selected Customer", font=("Segoe UI", 11))
         self.selected_customer_text1.place(x=56,y=138)
         self.picked_customer_apt_tab_label = tk.Label(self.appointments_tab, textvariable=self.selected_customer_apt_tab, font=("Segoe UI", 11, "bold"))
-        self.picked_customer_apt_tab_label.place(x = 194, y = 138)
+        self.picked_customer_apt_tab_label.place(x = 56, y = 158)
 
         ##Label and listbox for the selected customers appointments
         self.selected_customer_appointments_label = tk.Label(self.appointments_tab, text = "Selected Customer Appointments", font=("Segoe UI", 12))
@@ -247,14 +247,14 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
 
         ##Labels to show which customer is selected
-        self.selected_customer_text2 = tk.Label(self.customers_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
+        self.selected_customer_text2 = tk.Label(self.customers_tab, text = "Selected Customer", font=("Segoe UI", 11))
         self.selected_customer_text2.place(x=560,y=166)
         self.picked_customer_customers_tab_label = tk.Label(self.customers_tab, textvariable=self.selected_customer_customers_tab, font=("Segoe UI", 11, "bold"))
-        self.picked_customer_customers_tab_label.place(x = 698, y = 166)
+        self.picked_customer_customers_tab_label.place(x = 560, y = 186)
 
         ##Button to delete a customer
-        self.delete_customer_button = tk.Button(self.customers_tab, image = self.delete_customer_icon)
-        self.delete_customer_button.pack()
+        self.delete_customer_button = tk.Button(self.customers_tab, image = self.delete_customer_icon, relief="sunken", state="disabled")
+        self.delete_customer_button.place(x=868, y=160)
 
         #change cust info frame and label and buttons
         self.change_customer_information_frame = tk.Frame(self.customers_tab, relief="raised", borderwidth=6, padx=14, pady=1)
