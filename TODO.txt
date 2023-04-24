@@ -1,30 +1,27 @@
+BUGS
 ////
-TEMP 
+fix the first day of calendar bug
+make the picked customer listbox show only imminent appointments
+
+
+TEMP
+////
+pick a customer:
 
 
 
 
 
-/////////
-APPOINTMENTS TAB
-make top right be the appointment reschuduling
-make down right be appointment deletion
+FEATURES
+////////
 
-
-reschedule appointment, again pop up after validation of times dates etc, if not chosen date after searching customer etc, will take data from the date and time picker
-
-delete appointment, box type validation for deletion of a picked date after searching for a customer
-
-
-
-
-///////
-CUSTOMERS TAB 
-make delete
-update
-and search for customers in order to choose to update them
+CUSTOMERS TAB
+_____________ 
+make pick a customer
+make update customer and the toplevel window, the update happens on the picked customer
+make delete a customer, on a picked customer, customer has to not have any appointments 
 
 
 //////
 SEARCH TAB
- allows for the 2 searching options, either one at a time, or both at the same time for a specific date and customer
+show all appointments for a specific date or bring everything if no date specified

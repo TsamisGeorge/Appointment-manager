@@ -2,7 +2,7 @@
 #################################################################
 from appointments_methods import *
 class Customers_methods():
-    def get_contact_info(self):
+    def create_customer(self):
         valid_info = 0
         try:
             name = self.first_name_entry.get().lstrip().rstrip()
@@ -43,3 +43,25 @@ class Customers_methods():
                 self.connection.commit()
                 messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
                 close_connection(self.connection)
+    
+
+    def search_customer_customers_tab(self, event=None):
+        self.connection = open_connection()
+        prompt = self.search_customer_entry2.get().lstrip().rstrip()
+        if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
+            messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
+            self.selected_customer_customers_tab.set(f"None")
+            self.selected_customer_phone_number_customers_tab = 0
+            close_connection(self.connection)
+        else:
+            search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
+            search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
+            if not search_customer_results:
+                messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
+                self.selected_customer_customers_tab.set(f"None")
+                self.selected_customer_phone_number_customers_tab = 0
+            else:
+                print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
+                self.selected_customer_customers_tab.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
+                self.selected_customer_phone_number_customers_tab = f"{search_customer_results[0]['phone_number']}"
+            close_connection(self.connection)

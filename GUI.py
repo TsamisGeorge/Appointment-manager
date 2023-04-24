@@ -82,42 +82,53 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN APPOINTMENTS TAB #
         ##################################################################################
-        self.selected_customer_full_name = tk.StringVar()
-        self.selected_customer_full_name.set("None")
-        self.selected_customer_phone_number = None
+        self.selected_customer_apt_tab = tk.StringVar()
+        self.selected_customer_apt_tab.set("None")
+        self.selected_customer_phone_number_apt_tab = 0
         self.selected_appointment_date = None
 
-###          APPOINTMENT TAB WIDGETS
-##################################################################################################################################################################################################
+
+        # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN APPOINTMENTS TAB #
+        ##################################################################################
+        self.selected_customer_customers_tab = tk.StringVar()
+        self.selected_customer_customers_tab.set("None")
+        self.selected_customer_phone_number_customers_tab = 0
+
+
+        self.bottom_decoration = tk.Frame(self.main_window,background="#7d8080",width=1000,height=60,relief="ridge")
+        self.bottom_decoration.place(y=500)
+
+
+
+###  APPOINTMENT TAB WIDGETS  ###
+#################################
+
         # DECORATIONS #
         ###############
-        
-        #main window decor
-        self.bottom_decoration = tk.Frame(self.main_window,background="#A6A8A8",width=1000,height=50,relief="raised")
-        self.bottom_decoration.place(y=510)
 
         #appointments decor
-        self.top_decoration = tk.Frame(self.appointments_tab,background="#C0C6C6",width=1000,height=54,relief="raised")
+        self.top_decoration = tk.Frame(self.appointments_tab,background="#C0C6C6",width=1000,height=54,relief="ridge")
         self.top_decoration.place(y=0)
         
 
         #Label, Button and Entry to search a customer
         self.search_customer_label = tk.Label(self.appointments_tab, text = "Create Appointment", font=("Segoe UI", 14, "bold"), background="#C0C6C6", foreground="dark blue")
-        self.search_customer_label.place(x=72,y=8)
+        self.search_customer_label.place(x=72,y=10)
+        ###
         self.prompt_label = tk.Label(self.appointments_tab, text = "Enter customers phone number or email", font=("Segoe UI", 12))
-        self.prompt_label.place(x=56,y=76)
+        self.prompt_label.place(x=56,y=75)
         self.search_customer_entry = tk.Entry(self.appointments_tab, width= 50)
-        self.search_customer_entry.place(x=50, y=106)
-        self.search_customer_button = tk.Button(self.appointments_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer)
-        self.search_customer_button.place(x=364, y=101)
-        self.search_customer_entry.bind("<Return>", self.search_customer_enter)
+        self.search_customer_entry.place(x=50, y=105)
+        self.search_customer_button = tk.Button(self.appointments_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer_apt_tab)
+        self.search_customer_button.place(x=364, y=100)
+        self.search_customer_entry.bind("<Return>", self.search_customer_apt_tab)
 
 
         ##Labels to show which customer is selected
-        self.selected_customer_static_text = tk.Label(self.appointments_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
-        self.selected_customer_static_text.place(x=56,y=126)
-        self.picked_customer_label = tk.Label(self.appointments_tab, textvariable=self.selected_customer_full_name, font=("Segoe UI", 11, "bold"))
-        self.picked_customer_label.place(x = 194, y = 126)
+        self.selected_customer_text1 = tk.Label(self.appointments_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
+        self.selected_customer_text1.place(x=56,y=138)
+        self.picked_customer_apt_tab_label = tk.Label(self.appointments_tab, textvariable=self.selected_customer_apt_tab, font=("Segoe UI", 11, "bold"))
+        self.picked_customer_apt_tab_label.place(x = 194, y = 138)
 
         ##Label and listbox for the selected customers appointments
         self.selected_customer_appointments_label = tk.Label(self.appointments_tab, text = "Selected Customer Appointments", font=("Segoe UI", 12))
@@ -125,7 +136,7 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         self.selected_customer_appointments_listbox = tk.Listbox(self.appointments_tab, font=("Segoe UI", 10), width=40,height=10)
         self.selected_customer_appointments_listbox.place(x=594,y=106)
-        self.selected_customer_appointments_listbox.bind("<<ListboxSelect>>", self.update_manage_buttons)
+        self.selected_customer_appointments_listbox.bind("<<ListboxSelect>>", self.update_apt_manage_buttons)
 
         #scrollbar for the listbox
         self.scrollbar = tk.Scrollbar(self.appointments_tab, orient="vertical", background="red", troughcolor="blue")
@@ -162,12 +173,12 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.time_picker2.configure(state="readonly")
 
         #button to sumbit an appointment and start the logic testing
-        self.create_apt_button = tk.Button(self.appointments_tab, bg='Steel Blue', font = ("Segoe UI",12), text = "Create", command = self.create_appointment, state="disabled",width=10, relief="sunken")
-        self.create_apt_button.place(x = 280, y = 380)
+        self.create_apt_button = tk.Button(self.appointments_tab, bg='Steel Blue', font = ("Segoe UI",12), text = "Create", command = self.create_appointment, state="disabled",width=14,height=0, relief="sunken")
+        self.create_apt_button.place(x = 260, y = 380)
 
         #label for manage appointments side
         self.search_customer_label = tk.Label(self.appointments_tab, text = "Manage Appointments", font=("Segoe UI", 14, "bold"), bg='Steel Blue', background="#C0C6C6", foreground="dark blue")
-        self.search_customer_label.place(x=624,y=8)
+        self.search_customer_label.place(x=624,y=10)
 
         #buttons for rescheduling and deleting apts
         self.reschedule_apt_button = tk.Button(self.appointments_tab,text="Reschedule", font=("Segoe UI", 11), bg='Steel Blue', relief = "sunken", state="disabled", command=self.reschedule_apt_command)
@@ -177,37 +188,80 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.delete_apt_button = tk.Button(self.appointments_tab,text="Delete", font=("Segoe UI", 11), bg='Steel Blue', relief = "sunken", state="disabled", command=self.delete_apt_command, width=10)
         self.delete_apt_button.place(x=788, y=300)
 
-###            CUSTOMERS TAB WIDGETS
-##################################################################################################################################################################################################
+###  CUSTOMERS TAB WIDGETS  ###
+###############################
+
+        # DECORATIONS #
+        ###############
+        self.top_decoration = tk.Frame(self.customers_tab,background="#C0C6C6",width=1000,height=54,relief="ridge")
+        self.top_decoration.place(y=0)
+
         #adding the labels and entry boxes to the customers_tab
 
-        self.create_new_customer_label = tk.Label(self.customers_tab, text = "Add Customer", font = ("Segoe UI", 12, "bold"))
-        self.create_new_customer_label.place(x=146,y=10)
-
+        self.create_new_customer_label = tk.Label(self.customers_tab, text = "Create Customer", font = ("Segoe UI", 14, "bold"), background="#C0C6C6", foreground="dark blue")
+        self.create_new_customer_label.place(x=92,y=10)
 
         self.first_name_label = tk.Label(self.customers_tab, text = "First name: ", font=("Segoe UI", 12))
         self.first_name_entry = tk.Entry(self.customers_tab, width=50)
-        self.first_name_label.place(x=12, y=40)
-        self.first_name_entry.place(x=100, y=45)
+        self.first_name_label.place(x=12, y=85)
+        self.first_name_entry.place(x=100, y=90)
 
         self.surname_label = tk.Label(self.customers_tab, text = "Surname: ", font=("Segoe UI", 12))
         self.surname_entry = tk.Entry(self.customers_tab, width=50)
-        self.surname_label.place(x=12, y=100)
-        self.surname_entry.place(x=100, y=105)
+        self.surname_label.place(x=12, y=165)
+        self.surname_entry.place(x=100, y=170)
 
         self.email_label = tk.Label(self.customers_tab, text = "Email: ", font=("Segoe UI", 12))
         self.email_entry = tk.Entry(self.customers_tab, width=50)
-        self.email_label.place(x=12, y=160)
-        self.email_entry.place(x=100, y=165)
+        self.email_label.place(x=12, y=245)
+        self.email_entry.place(x=100, y=250)
 
         self.phone_number_label = tk.Label(self.customers_tab, text = "Phone Number: ", font=("Segoe UI", 12))
         self.phone_number_entry = tk.Entry(self.customers_tab, width=15)
-        self.phone_number_label.place(x=12, y=220)
-        self.phone_number_entry.place(x=135, y=225)
+        self.phone_number_label.place(x=12, y=325)
+        self.phone_number_entry.place(x=135, y=330)
 
-        #button to get client credentials
-        self.contact_info_button = tk.Button(self.customers_tab,height = 1,width= 20, bg='Steel Blue', font = ("Segoe UI",10), text = "Set Contact Info", command = self.get_contact_info)
-        self.contact_info_button.place(x=250, y=220)
+        self.create_customer_button = tk.Button(self.customers_tab,height = 0,width = 18, bg='Steel Blue', font = ("Segoe UI",11), text = "Create", command = self.create_customer)
+        self.create_customer_button.place(x=250, y=322)
+
+
+        #manage customers label
+        self.create_new_customer_label = tk.Label(self.customers_tab, text = "Manage Customers", font = ("Segoe UI", 14, "bold"), background="#C0C6C6", foreground="dark blue")
+        self.create_new_customer_label.place(x=624,y=10)
+
+
+        #search customers place
+        self.prompt_label2 = tk.Label(self.customers_tab, text = "Enter customers phone number or email", font=("Segoe UI", 12))
+        self.prompt_label2.place(x=560,y=80)
+        self.search_customer_entry2 = tk.Entry(self.customers_tab, width= 50)
+        self.search_customer_entry2.place(x=554, y=115)
+        self.search_customer_entry2.bind("<Return>", self.search_customer_customers_tab)
+        self.search_customer_button2 = tk.Button(self.customers_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer_customers_tab)
+        self.search_customer_button2.place(x=868, y=110)
+
+
+        ##Labels to show which customer is selected
+        self.selected_customer_text2 = tk.Label(self.customers_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
+        self.selected_customer_text2.place(x=560,y=148)
+        self.picked_customer_customers_tab_label = tk.Label(self.customers_tab, textvariable=self.selected_customer_customers_tab, font=("Segoe UI", 11, "bold"))
+        self.picked_customer_customers_tab_label.place(x = 698, y = 148)
+
+        #change cust info frame and label and buttons
+        self.change_customer_information_frame = tk.Frame(self.customers_tab, relief="raised", borderwidth=6, padx=14, pady=1)
+        self.change_customer_information_frame.place(x=556, y=190)
+        self.change_customer_information_label = tk.Label(self.change_customer_information_frame, text="Change Selected Customers Information", font=("Segoe UI",11))
+        self.change_customer_information_label.pack()
+
+        self.change_first_name_button = tk.Button(self.customers_tab, text="Change First Name", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
+        self.change_first_name_button.place(x=556, y=240)
+        self.change_surname_button = tk.Button(self.customers_tab, text="Change Surname", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
+        self.change_surname_button.place(x=743, y=280)
+        self.change_email_button = tk.Button(self.customers_tab, text="Change Email", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
+        self.change_email_button.place(x=556, y=280)
+        self.change_phone_number_button = tk.Button(self.customers_tab, text="Change Phone Number", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
+        self.change_phone_number_button.place(x=702, y=240)
+
+        
 
         # TK MAINLOOP #
         ##############

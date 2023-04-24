@@ -1,4 +1,4 @@
-###   METHODS TO WORK WITH THE WIDGETS ON THE APPOINTMENT TAB    ###
+###      METHODS TO WORK WITH THE WIDGETS ON THE APPOINTMENT TAB ###
 ####################################################################
 from apt_imports import *
 class Appointment_methods():
@@ -33,13 +33,13 @@ class Appointment_methods():
             self.time_picker.place(x = 260, y =260)
             self.time_picker.configure(state="readonly")
 
-    def search_customer(self):
+    def search_customer_apt_tab(self, event=None):
         self.connection = open_connection()
         prompt = self.search_customer_entry.get().lstrip().rstrip()
         if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_full_name.set(f"None")
-            self.selected_customer_phone_number = 0
+            self.selected_customer_apt_tab.set(f"None")
+            self.selected_customer_phone_number_apt_tab = 0
             self.create_apt_button.configure(state="disabled",relief="sunken")
             self.selected_customer_appointments_listbox.delete(0, tk.END)
             close_connection(self.connection)
@@ -48,46 +48,18 @@ class Appointment_methods():
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             if not search_customer_results:
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_full_name.set(f"None")
-                self.selected_customer_phone_number = 0
+                self.selected_customer_apt_tab.set(f"None")
+                self.selected_customer_phone_number_apt_tab = 0
                 self.create_apt_button.configure(state="disabled",relief="sunken")
                 self.selected_customer_appointments_listbox.delete(0, tk.END)
             else:
                 print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
-                self.selected_customer_full_name.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
-                self.selected_customer_phone_number = f"{search_customer_results[0]['phone_number']}"
+                self.selected_customer_apt_tab.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
+                self.selected_customer_phone_number_apt_tab = f"{search_customer_results[0]['phone_number']}"
                 self.create_apt_button.configure(state="normal",relief="raised")
                 self.update_customer_appointments()
             close_connection(self.connection)
-        self.update_manage_buttons()
-
-    def search_customer_enter(self, event):
-        self.connection = open_connection()
-        prompt = self.search_customer_entry.get().lstrip().rstrip()
-        if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
-            messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_full_name.set(f"None")
-            self.selected_customer_phone_number = 0
-            self.create_apt_button.configure(state="disabled",relief="sunken")
-            self.selected_customer_appointments_listbox.delete(0, tk.END)
-            close_connection(self.connection)
-        else:
-            search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
-            search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
-            if not search_customer_results:
-                messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_full_name.set(f"None")
-                self.selected_customer_phone_number = 0
-                self.create_apt_button.configure(state="disabled",relief="sunken")
-                self.selected_customer_appointments_listbox.delete(0, tk.END)
-            else:
-                print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
-                self.selected_customer_full_name.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
-                self.selected_customer_phone_number = f"{search_customer_results[0]['phone_number']}"
-                self.create_apt_button.configure(state="normal",relief="raised")
-                self.update_customer_appointments()
-            close_connection(self.connection)
-        self.update_manage_buttons()
+        self.update_apt_manage_buttons()
 
 
 
@@ -109,7 +81,7 @@ class Appointment_methods():
             appointmnents_results = self.check_if_apt_valid(apt_date, apt_duration)
             self.connection = open_connection()
             if not appointmnents_results:
-                current_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number}'"
+                current_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
                 current_customer_results = fetch_all_dict_list(self.connection, current_customer_query)
                 last_appointment_query = f"SELECT appointment_id FROM appointments ORDER BY appointment_id desc LIMIT 1"
                 last_appointment_id = fetch_all_dict_list(self.connection, last_appointment_query)
@@ -130,7 +102,7 @@ class Appointment_methods():
 
 
     def update_customer_appointments(self):
-        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number}'"
+        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
         self.connection = open_connection()
         curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
         curr_customer_appointments_query = f"SELECT * FROM Appointments WHERE client_id = {curr_customer_results[0]['client_id']}"
@@ -143,10 +115,10 @@ class Appointment_methods():
                 self.selected_customer_appointments_listbox.insert(tk.END, f"{appointment['appointment_date'].date()}   {appointment['appointment_date'].time()}  - {appointment_duration}")
         else:
             self.selected_customer_appointments_listbox.delete(0, tk.END)
-        self.update_manage_buttons()
+        self.update_apt_manage_buttons()
         close_connection(self.connection)
 
-    def update_manage_buttons(self, event=None):
+    def update_apt_manage_buttons(self, event=None):
         num_selected = len(self.selected_customer_appointments_listbox.curselection())
         if num_selected > 0:
             self.reschedule_apt_button.configure(relief = "raised", state="normal")
@@ -198,5 +170,5 @@ class Appointment_methods():
             execute_query(self.connection, delete_apt_query)
             self.connection.commit()
             self.update_customer_appointments()
-            self.update_manage_buttons()
+            self.update_apt_manage_buttons()
             close_connection(self.connection)
