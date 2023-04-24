@@ -20,8 +20,8 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.main_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Set minimum and maximum window size
-        self.main_window.minsize(window_width, window_height)
-        self.main_window.maxsize(window_width, window_height)
+        #self.main_window.minsize(window_width, window_height)
+        #self.main_window.maxsize(window_width, window_height)
 
 
         # TAB HANDLER ATTACHED TO THE MAIN WINDOW #
@@ -70,7 +70,13 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         # ICONS FOR THINGS IN CUSTOMERS TAB #
         #####################################
-        #TEMP EMPTY
+        self.check_icon = Image.open("pics/check.png")
+        self.check_icon = self.check_icon.resize((26,26), Image.ANTIALIAS)
+        self.check_icon = ImageTk.PhotoImage(self.check_icon)
+
+        self.delete_customer_icon = Image.open("pics/trash.png")
+        self.delete_customer_icon = self.delete_customer_icon.resize((26,26), Image.ANTIALIAS)
+        self.delete_customer_icon = ImageTk.PhotoImage(self.delete_customer_icon)
 
         # ADDING THE TABS TO THE TAB MANAGER #
         ######################################
@@ -242,26 +248,33 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         ##Labels to show which customer is selected
         self.selected_customer_text2 = tk.Label(self.customers_tab, text = "Selected Customer: ", font=("Segoe UI", 11))
-        self.selected_customer_text2.place(x=560,y=148)
+        self.selected_customer_text2.place(x=560,y=166)
         self.picked_customer_customers_tab_label = tk.Label(self.customers_tab, textvariable=self.selected_customer_customers_tab, font=("Segoe UI", 11, "bold"))
-        self.picked_customer_customers_tab_label.place(x = 698, y = 148)
+        self.picked_customer_customers_tab_label.place(x = 698, y = 166)
+
+        ##Button to delete a customer
+        self.delete_customer_button = tk.Button(self.customers_tab, image = self.delete_customer_icon)
+        self.delete_customer_button.pack()
 
         #change cust info frame and label and buttons
         self.change_customer_information_frame = tk.Frame(self.customers_tab, relief="raised", borderwidth=6, padx=14, pady=1)
-        self.change_customer_information_frame.place(x=556, y=190)
+        self.change_customer_information_frame.place(x=556, y=220)
         self.change_customer_information_label = tk.Label(self.change_customer_information_frame, text="Change Selected Customers Information", font=("Segoe UI",11))
         self.change_customer_information_label.pack()
 
-        self.change_first_name_button = tk.Button(self.customers_tab, text="Change First Name", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
-        self.change_first_name_button.place(x=556, y=240)
-        self.change_surname_button = tk.Button(self.customers_tab, text="Change Surname", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
-        self.change_surname_button.place(x=743, y=280)
-        self.change_email_button = tk.Button(self.customers_tab, text="Change Email", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
-        self.change_email_button.place(x=556, y=280)
-        self.change_phone_number_button = tk.Button(self.customers_tab, text="Change Phone Number", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled")
-        self.change_phone_number_button.place(x=702, y=240)
+        self.change_first_name_button = tk.Button(self.customers_tab, text="Change First Name", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled", command=self.change_customer_first_name,name="change first name")
+        self.change_first_name_button.place(x=556, y=282)
 
-        
+        self.change_surname_button = tk.Button(self.customers_tab, text="Change Surname", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled",command=self.change_customer_surname,name="change surname")
+        self.change_surname_button.place(x=743, y=322)
+
+        self.change_email_button = tk.Button(self.customers_tab, text="Change Email", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled",command=self.change_customer_email,name="change email")
+        self.change_email_button.place(x=556, y=322)
+
+        self.change_phone_number_button = tk.Button(self.customers_tab, text="Change Phone Number", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled",command=self.change_customer_phone_number,name="change phone number")
+        self.change_phone_number_button.place(x=702, y=282)
+
+
 
         # TK MAINLOOP #
         ##############

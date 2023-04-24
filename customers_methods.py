@@ -50,7 +50,7 @@ class Customers_methods():
         prompt = self.search_customer_entry2.get().lstrip().rstrip()
         if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_customers_tab.set(f"None")
+            self.selected_customer_customers_tab.set("None")
             self.selected_customer_phone_number_customers_tab = 0
             close_connection(self.connection)
         else:
@@ -58,10 +58,58 @@ class Customers_methods():
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             if not search_customer_results:
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_customers_tab.set(f"None")
+                self.selected_customer_customers_tab.set("None")
                 self.selected_customer_phone_number_customers_tab = 0
             else:
                 print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_customers_tab.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number_customers_tab = f"{search_customer_results[0]['phone_number']}"
             close_connection(self.connection)
+        self.update_customer_buttons()
+    
+
+    def update_customer_buttons(self):
+        if self.selected_customer_phone_number_customers_tab == 0:
+            self.change_first_name_button.configure(state="disabled", relief="sunken")
+            self.change_surname_button.configure(state="disabled", relief="sunken")
+            self.change_email_button.configure(state="disabled", relief="sunken")
+            self.change_phone_number_button.configure(state="disabled", relief="sunken")
+        else:
+            self.change_first_name_button.configure(state="normal", relief="raised")
+            self.change_surname_button.configure(state="normal", relief="raised")
+            self.change_email_button.configure(state="normal", relief="raised")
+            self.change_phone_number_button.configure(state="normal", relief="raised")
+
+    def make_toplevel_window(self, button_name):
+        self.change_customer_info_window = tk.Toplevel()
+
+        window_width = 330
+        window_height = 120
+        screen_width = self.change_customer_info_window.winfo_screenwidth()
+        screen_height = self.change_customer_info_window.winfo_screenheight()
+        x = int((screen_width/2) - (window_width/2))
+        y = int((screen_height/2) - (window_height/2))
+        self.change_customer_info_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+        self.change_customer_info_window.minsize(window_width, window_height)
+        self.change_customer_info_window.maxsize(window_width, window_height)
+
+        self.toplevel_window_frame = tk.Frame(self.change_customer_info_window, relief="raised", borderwidth=6, padx=14, pady=1)
+        self.toplevel_window_frame.pack()
+        self.toplevel_window_label = tk.Label(self.toplevel_window_frame, text=f"{button_name.title()}", font=("Segoe UI",10))
+        self.toplevel_window_label.pack()
+        self.change_customer_info_entry = tk.Entry(self.change_customer_info_window,width=36)
+        self.change_customer_info_entry.place(x=56,y=66)
+        self.change_customer_info_button = tk.Button(self.change_customer_info_window, image = self.check_icon)
+        self.change_customer_info_button.place(x=280,y=60)
+
+
+
+    def change_customer_first_name(self):
+        self.make_toplevel_window(self.change_first_name_button.winfo_name())
+    def change_customer_surname(self):
+        self.make_toplevel_window(self.change_surname_button.winfo_name())
+    def change_customer_email(self):
+        self.make_toplevel_window(self.change_email_button.winfo_name())
+    def change_customer_phone_number(self):
+        self.make_toplevel_window(self.change_phone_number_button.winfo_name())

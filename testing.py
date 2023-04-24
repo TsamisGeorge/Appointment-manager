@@ -1,14 +1,16 @@
 import tkinter as tk
 
-# Create a Tkinter window
+class ButtonReliefs(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.create_widgets()
+
+    def create_widgets(self):
+        reliefs = ['flat', 'raised', 'sunken', 'groove', 'ridge']
+        for r in reliefs:
+            tk.Button(self.master, text=r, relief=r).pack(side='left', padx=5, pady=5)
+
 root = tk.Tk()
-root.title("Relief Demo")
-
-# Create a frame to contain each relief option label
-raised_frame = tk.Frame(root, relief="raised", borderwidth=5, padx=10, pady=10)
-raised_frame.pack(side="left", padx=10)
-
-# Create a label for each relief option and add it to the corresponding frame
-tk.Label(raised_frame, text="Raised").pack()
-
-root.mainloop()
+app = ButtonReliefs(master=root)
+app.mainloop()
