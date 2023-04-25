@@ -8,8 +8,8 @@ TEMP
 ////
 CUSTOMERS TAB
 _____________
-make change selected customer information logic
-make delete a customer, on a picked customer, customer has to not have any appointments 
+make change phone number, email, surname logic, email and phone number should check if it exists before doing anything after taking it 
+
 
 
 
@@ -19,6 +19,11 @@ FEATURES
 ////////
 
 
+
+
 //////
 SEARCH TAB
+
+MAYBE
+/////
 show all appointments for a specific date or bring everything if no date specified

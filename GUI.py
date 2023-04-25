@@ -94,13 +94,16 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.selected_appointment_date = None
 
 
-        # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN APPOINTMENTS TAB #
+        # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN CUSTOMERS TAB #
         ##################################################################################
         self.selected_customer_customers_tab = tk.StringVar()
         self.selected_customer_customers_tab.set("None")
         self.selected_customer_phone_number_customers_tab = 0
 
 
+
+        # DECORATIONS OF MAIN WINDOW #
+        ##############################
         self.bottom_decoration = tk.Frame(self.main_window,background="#7d8080",width=1000,height=60,relief="ridge")
         self.bottom_decoration.place(y=500)
 
@@ -253,7 +256,7 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.picked_customer_customers_tab_label.place(x = 560, y = 186)
 
         ##Button to delete a customer
-        self.delete_customer_button = tk.Button(self.customers_tab, image = self.delete_customer_icon, relief="sunken", state="disabled")
+        self.delete_customer_button = tk.Button(self.customers_tab, image = self.delete_customer_icon, relief="sunken", state="disabled", command=self.delete_customer_command)
         self.delete_customer_button.place(x=868, y=160)
 
         #change cust info frame and label and buttons

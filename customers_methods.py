@@ -90,6 +90,33 @@ class Customers_methods():
             self.change_email_button.configure(state="normal", relief="raised")
             self.change_phone_number_button.configure(state="normal", relief="raised")
 
+
+    def delete_customer_command(self):
+        #see if customer has appointments or not etc
+        print(self.selected_customer_phone_number_customers_tab)
+        self.connection = open_connection()
+        picked_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+        picked_customer_results = fetch_all_dict_list(self.connection, picked_customer_query)
+        appointments_query = f"SELECT * FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']}"
+        appointments_results = fetch_all_dict_list(self.connection, appointments_query)
+        close_connection(self.connection)
+        if not appointments_results:
+            confirmation = messagebox.askyesno(title="Confirmation", message=f"Are you sure you want to delete customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} ?")
+            if confirmation:
+                self.connection = open_connection()
+                delete_query = f"DELETE FROM Clients WHERE client_id = {picked_customer_results[0]['client_id']}"
+                execute_query(self.connection, delete_query)
+                self.connection.commit()
+                messagebox.showinfo(title="Customer Deleted", message=f"Customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} has been successfully deleted")
+                close_connection(self.connection)
+                self.selected_customer_phone_number_customers_tab = 0
+                self.selected_customer_customers_tab.set("None")
+                self.update_customer_buttons()
+        else:
+            messagebox.showwarning(title="Unable To Delete", message="Cannot delete a customer that has appointments due")
+        close_connection(self.connection)
+
+
     def make_toplevel_window(self, button_name):
         self.change_customer_info_window = tk.Toplevel()
 
@@ -110,10 +137,9 @@ class Customers_methods():
         self.toplevel_window_label.pack()
         self.change_customer_info_entry = tk.Entry(self.change_customer_info_window,width=36)
         self.change_customer_info_entry.place(x=56,y=66)
-        self.change_customer_info_button = tk.Button(self.change_customer_info_window, image = self.check_icon)
+        self.change_customer_info_button = tk.Button(self.change_customer_info_window, image = self.check_icon, command=lambda: self.commit_changes(button_name))
         self.change_customer_info_button.place(x=280,y=60)
-
-
+        self.change_customer_info_entry.bind("<Return>", lambda event: self.commit_changes(button_name, event))
 
     def change_customer_first_name(self):
         self.make_toplevel_window(self.change_first_name_button.winfo_name())
@@ -123,3 +149,43 @@ class Customers_methods():
         self.make_toplevel_window(self.change_email_button.winfo_name())
     def change_customer_phone_number(self):
         self.make_toplevel_window(self.change_phone_number_button.winfo_name())
+
+
+
+
+    def commit_changes(self, button_name, event=None):
+        self.connection = open_connection()
+        mod_query = "UPDATE clients SET"
+        user_input = self.change_customer_info_entry.get()
+        selected_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+        selected_customer_results = fetch_all_dict_list(self.connection, selected_customer_query)
+        if button_name == "change first name":
+            if user_input.isalpha() and len(user_input) <= 26:
+                mod_query += f" first_name = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+                confirmation = messagebox.askyesno(title="Confirmation", message=f"Are you sure you want to change Customer {selected_customer_results[0]['first_name']} {selected_customer_results[0]['last_name']} first name to '{user_input}' ?")
+                if confirmation:
+                    execute_query(self.connection, mod_query)
+                    self.connection.commit()
+            else:
+                messagebox.showwarning(title="Invalid Input", message=f"'{user_input}' is not a valid first name")
+
+
+
+###        TEMP EMPTY       ###
+###############################
+        elif button_name == "change surname":
+            if 1:
+                mod_query += " last_name = "
+            else:
+                pass
+        elif button_name == "change email":
+            if 1:
+                mod_query += " email = "
+            else:
+                pass
+        elif button_name == "change phone number":
+            if 1:
+                mod_query += " phone_number = "
+            else:
+                pass
+        close_connection(self.connection)
