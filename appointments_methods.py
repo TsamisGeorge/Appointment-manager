@@ -23,12 +23,14 @@ class Appointment_methods():
         if date_obj == datetime.today().date(): #if today
             self.time_picker.destroy()
             hour = 24 -(24-datetime.now().hour)
-            print(type(hour))
             if hour < 8: #if hour is 7 or below
                 self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9, 21) for m in range(0, 60, 10)])
-            elif hour >= 8:
+                self.time_picker['values'] +("21:00",)
+            elif hour >= 8 and hour < 22:
                 self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+2, 21) for m in range(0, 60, 10)])
-            self.time_picker['values'] += ("21:00",)
+                self.time_picker['values'] +("21:00",)
+            else:
+                self.time_picker = ttk.Combobox(self.appointments_tab)
             self.time_picker.place(x = 260, y =260)
             self.time_picker.configure(state="readonly")
         else:#other day

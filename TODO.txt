@@ -1,6 +1,6 @@
 BUGS
 ////
-
+before deleting customer, delete all previous records of appointments that are not due
 
 TEMP
 ////
@@ -9,13 +9,13 @@ TEMP
 _____________
 CUSTOMERS TAB
 _____________
-
+change the way email validation works
 
 
 __________
 SEARCH TAB
 __________
-
+search for specific day appointments, bring them on listbox, have 2 buttons(?) to print and notify with email
 
 
 ________

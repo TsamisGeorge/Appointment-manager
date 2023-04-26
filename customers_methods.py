@@ -102,14 +102,16 @@ class Customers_methods():
         appointments_results = fetch_all_dict_list(self.connection, appointments_query)
         close_connection(self.connection)
         if not appointments_results:
+            #delete appointments before
+            self.connection = open_connection()
+            delete_apt_query = f"DELETE FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']}"
+            execute_query(self.connection, delete_apt_query)
             confirmation = messagebox.askyesno(title="Confirmation", message=f"Are you sure you want to delete customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} ?")
             if confirmation:
-                self.connection = open_connection()
-                delete_query = f"DELETE FROM Clients WHERE client_id = {picked_customer_results[0]['client_id']}"
-                execute_query(self.connection, delete_query)
+                delete_customer_query = f"DELETE FROM Clients WHERE client_id = {picked_customer_results[0]['client_id']}"
+                execute_query(self.connection, delete_customer_query)
                 self.connection.commit()
                 messagebox.showinfo(title="Customer Deleted", message=f"Customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} has been successfully deleted")
-                close_connection(self.connection)
                 self.selected_customer_phone_number_customers_tab = 0
                 self.selected_customer_customers_tab.set("None")
                 self.update_customer_buttons()
