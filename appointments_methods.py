@@ -14,18 +14,24 @@ class Appointment_methods():
         close_connection(self.connection)
         return apt_results
 
-    def update_time_picker(self, event):
+    def update_time_picker(self, event=None):
         date_string = f'{self.date_picker.selection_get()}'
         date_format = '%Y-%m-%d'
         date_obj = datetime.strptime(date_string, date_format).date()
+        print(date_obj)
         
-        if date_obj == datetime.today().date():
+        if date_obj == datetime.today().date(): #if today
             self.time_picker.destroy()
             hour = 24 -(24-datetime.now().hour)
-            self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9+hour+1, 24) for m in range(0, 60, 10)])
+            print(type(hour))
+            if hour < 8: #if hour is 7 or below
+                self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9, 21) for m in range(0, 60, 10)])
+            elif hour >= 8:
+                self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+2, 21) for m in range(0, 60, 10)])
+            self.time_picker['values'] += ("21:00",)
             self.time_picker.place(x = 260, y =260)
             self.time_picker.configure(state="readonly")
-        else:
+        else:#other day
             self.time_picker.destroy()
             hour = 0
             self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9, 21) for m in range(0, 60, 10)])
@@ -53,7 +59,6 @@ class Appointment_methods():
                 self.create_apt_button.configure(state="disabled",relief="sunken")
                 self.selected_customer_appointments_listbox.delete(0, tk.END)
             else:
-                print(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_apt_tab.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number_apt_tab = f"{search_customer_results[0]['phone_number']}"
                 self.create_apt_button.configure(state="normal",relief="raised")
@@ -102,12 +107,14 @@ class Appointment_methods():
 
 
     def update_customer_appointments(self):
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        print(formatted_datetime)
         curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
         self.connection = open_connection()
         curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
-        curr_customer_appointments_query = f"SELECT * FROM Appointments WHERE client_id = {curr_customer_results[0]['client_id']}"
+        curr_customer_appointments_query = f"SELECT * FROM Appointments WHERE client_id = {curr_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
         curr_customer_appointments_results = fetch_all_dict_list(self.connection, curr_customer_appointments_query)
-        print(len(curr_customer_appointments_results), curr_customer_appointments_results)
         if curr_customer_appointments_results:
             self.selected_customer_appointments_listbox.delete(0, tk.END)
             for appointment in curr_customer_appointments_results:

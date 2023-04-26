@@ -92,12 +92,13 @@ class Customers_methods():
 
 
     def delete_customer_command(self):
-        #see if customer has appointments or not etc
-        print(self.selected_customer_phone_number_customers_tab)
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
         self.connection = open_connection()
         picked_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
         picked_customer_results = fetch_all_dict_list(self.connection, picked_customer_query)
-        appointments_query = f"SELECT * FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']}"
+        appointments_query = f"SELECT * FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
         appointments_results = fetch_all_dict_list(self.connection, appointments_query)
         close_connection(self.connection)
         if not appointments_results:

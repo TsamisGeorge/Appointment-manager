@@ -1,28 +1,31 @@
 BUGS
 ////
-fix the first day of calendar bug
-make the picked customer listbox show only imminent appointments
 
 
 TEMP
 ////
+
+
+_____________
 CUSTOMERS TAB
 _____________
 
 
 
-
-
-
-FEATURES
-////////
-
-
-
-
-//////
+__________
 SEARCH TAB
+__________
 
-MAYBE
-/////
+
+
+________
+FEATURES
+________
+
+
+__________
+SEARCH TAB
+__________
+
+
 show all appointments for a specific date or bring everything if no date specified

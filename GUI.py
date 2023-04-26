@@ -165,11 +165,11 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         #appointment time picker and label for it
         self.time_picker_label = tk.Label(self.appointments_tab, text = "Appointment Time", font=("Segoe UI", 11))
         self.time_picker_label.place(x = 260, y =224)
-        hour = 24 -(24-datetime.now().hour)
-        time_var = tk.StringVar()
-        self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+1, 24) for m in range(0, 60, 10)])
+        self.time_picker = ttk.Combobox(self.appointments_tab)
         self.time_picker.place(x = 260, y =260)
         self.time_picker.configure(state="readonly")
+        #updating the time at the start because the current day is always selected
+        self.update_time_picker()
 
         #updating the time of the time picker according to the calendar selection every time there is any new calendar selection
         self.date_picker.bind("<<CalendarSelected>>", self.update_time_picker)
