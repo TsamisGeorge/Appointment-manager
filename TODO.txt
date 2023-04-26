@@ -8,7 +8,6 @@ TEMP
 ////
 CUSTOMERS TAB
 _____________
-make change phone number, email, surname logic, email and phone number should check if it exists before doing anything after taking it 
 
 
 

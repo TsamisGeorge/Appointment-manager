@@ -156,9 +156,10 @@ class Customers_methods():
     def commit_changes(self, button_name, event=None):
         self.connection = open_connection()
         mod_query = "UPDATE clients SET"
-        user_input = self.change_customer_info_entry.get()
+        user_input = self.change_customer_info_entry.get().rstrip().lstrip()
         selected_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
         selected_customer_results = fetch_all_dict_list(self.connection, selected_customer_query)
+
         if button_name == "change first name":
             if user_input.isalpha() and len(user_input) <= 26:
                 mod_query += f" first_name = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
@@ -166,26 +167,54 @@ class Customers_methods():
                 if confirmation:
                     execute_query(self.connection, mod_query)
                     self.connection.commit()
+                    messagebox.showinfo(title="Changed Successfully", message="First name has been changed successfully")
+                    self.selected_customer_customers_tab.set(f"{user_input} {selected_customer_results[0]['last_name']}")
             else:
-                messagebox.showwarning(title="Invalid Input", message=f"'{user_input}' is not a valid first name")
+                messagebox.showwarning(title="Invalid First Name", message=f"'{user_input}' is not a valid first name")
 
-
-
-###        TEMP EMPTY       ###
-###############################
         elif button_name == "change surname":
-            if 1:
-                mod_query += " last_name = "
+            if user_input.isalpha() and len(user_input) <= 26:
+                mod_query += f" last_name = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+                confirmation = messagebox.askyesno(title="Confirmation", message = f"Are you sure you want to change Customer {selected_customer_results[0]['first_name']} {selected_customer_results[0]['last_name']} surname to '{user_input}' ?")
+                if confirmation:
+                    execute_query(self.connection, mod_query)
+                    self.connection.commit()
+                    messagebox.showinfo(title="Changed Successfully", message="Last name has been changed successfully")
+                    self.selected_customer_customers_tab.set(f"{selected_customer_results[0]['first_name']} {user_input}")
             else:
-                pass
+                messagebox.showwarning(title="Invalid Surname", message=f"'{user_input}' is not a valid surname")
+
         elif button_name == "change email":
-            if 1:
-                mod_query += " email = "
-            else:
-                pass
+            try:
+                if not validate_email(user_input).email or len(user_input) > 50:
+                    raise ValueError
+                see_if_email_exists_query = f"SELECT * FROM Clients WHERE email = '{user_input}'"
+                see_if_email_exists_results = fetch_all_dict_list(self.connection, see_if_email_exists_query)
+                if not see_if_email_exists_results:
+                    mod_query += f" email = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+                    confirmation = messagebox.askyesno(title= "Confirmation", message=f"Are you sure you want to change Customer {selected_customer_results[0]['first_name']} {selected_customer_results[0]['last_name']} email to '{user_input}'")
+                    if confirmation:
+                        execute_query(self.connection, mod_query)
+                        self.connection.commit()
+                        messagebox.showinfo(title="Changed Successfully", message="Email has been changed successfully")
+                else:
+                    messagebox.showwarning(title="Email Taken", message=f"Email is taken from Customer {see_if_email_exists_results[0]['first_name']} {see_if_email_exists_results[0]['last_name']}")
+            except ValueError as e:
+                messagebox.showwarning(title="Invalid Email", message=f"{e}")
+
         elif button_name == "change phone number":
-            if 1:
-                mod_query += " phone_number = "
+            if user_input.isalnum() and len(user_input) == 10:
+                see_if_phone_exists_query = f"SELECT * FROM Clients WHERE phone_number = '{user_input}'"
+                see_if_phone_exists_results = fetch_all_dict_list(self.connection, see_if_phone_exists_query)
+                if not see_if_phone_exists_results:
+                    mod_query += f" phone_number = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+                    confirmation = messagebox.askyesno(title="Confirmation", message = f"Are you sure you want to change Customer {selected_customer_results[0]['first_name']} {selected_customer_results[0]['last_name']} phone number to '{user_input}' ?")
+                    if confirmation:
+                        execute_query(self.connection, mod_query)
+                        self.connection.commit()
+                        messagebox.showinfo(title="Changed Successfully", message="Phone number has been changed successfully")
+                        self.selected_customer_phone_number_customers_tab = f"{user_input}"
+                        self.update_customer_buttons()
             else:
-                pass
+                messagebox.showwarning(title="Invalid Phone Number", message=f"'{user_input}' is not a valid phone number")
         close_connection(self.connection)
