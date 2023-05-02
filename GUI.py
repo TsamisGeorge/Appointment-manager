@@ -1,3 +1,7 @@
+###  MAIN CLASS OF THE PROGRAM AND GUI MANAGER  ###
+###################################################
+
+
 from appointments_methods import *
 from customers_methods import *
 

@@ -1,3 +1,6 @@
+###  TOOLS FOR THE CONNECTION WITH THE DATABASE  ###
+####################################################
+
 
 import mysql.connector as MYSQL
 
@@ -34,6 +37,10 @@ def fetch_all_dict_list(connector, query):
         print(e)
 
 def execute_query(connector, query):
-    cursor = connector.cursor()
-    cursor.execute(query)
-    cursor.close()
+    try:
+
+        cursor = connector.cursor()
+        cursor.execute(query)
+        cursor.close()
+    except MYSQL.Error as e:
+        print(e)

@@ -1,3 +1,6 @@
+###  MAIN PROGRAM  ###
+######################
+
 # Import την κλάση Appointment_manager απο το αρχείο GUI
 from GUI import Appointment_manager
 

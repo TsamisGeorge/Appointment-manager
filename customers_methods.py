@@ -1,6 +1,7 @@
 ###   METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB   ###
 #################################################################
 
+
 from appointments_methods import *
 
 # Parent Κλαση της κλασης Appointment_manager που δινει τις
@@ -49,7 +50,7 @@ class Customers_methods():
                 close_connection(self.connection)
             else:
                 # Δημιουργια ερωτηματος που θα φερει το τελευταιο client_id απο την βαση δεδομενων
-                # αν υπαρχει επιστρεφομενο client_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
+                # αν υπαρχει επιστρεφομενο client_id στο last_entry_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
                 # τα στοιχεια που πηρε απο τα entries και προσθετει τον πελατη με client_id αυτο που πηρε αυξανομενο κατα 1
                 # αν δεν υπαρχουν καταγραφες τοτε δημιουργει τον πρωτο πελατη με client_id 1
                 last_customer_query = f"SELECT client_id FROM Clients ORDER BY client_id desc LIMIT 1"
@@ -152,8 +153,9 @@ class Customers_methods():
         self.connection = open_connection()
         picked_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
         picked_customer_results = fetch_all_dict_list(self.connection, picked_customer_query)
-        # δημιουργια ερωτηματος για την ανακτηση ολων τν ραντεβου του επιλεγμενου πελατη, τα οποια ειναι μεταγενεστερα της datetime.now(),
-        # της τωρινης δηλαδη ημερομηνιας, ωστε να δουμε αν ο πελατης εχει ραντεβου τα οποια δεν εχουν ολοκληρωθει ακομα
+        # δημιουργια ερωτηματος για την ανακτηση ολων των ραντεβου του επιλεγμενου πελατη, τα οποια ειναι μεταγενεστερα της datetime.now(),
+        # της τωρινης δηλαδη ημερομηνιας, και αποθηκευση τους στο appointments_results 
+        # ωστε να δουμε αν ο πελατης εχει ραντεβου τα οποια δεν εχουν ολοκληρωθει ακομα
         appointments_query = f"SELECT * FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
         appointments_results = fetch_all_dict_list(self.connection, appointments_query)
         if not appointments_results: # αν δεν υπαρχουν ραντεβου τα οποια δεν ειναι ολοκληρωμενα
@@ -256,7 +258,7 @@ class Customers_methods():
         user_input = self.change_customer_info_entry.get().rstrip().lstrip()
 
         # δημιουργια ερωτηματος για ανακτηση δεδομενων του επιλεγμενου πελατη, με χρηση του μοναδικου
-        # κινητου του αφου εχει ηδη επιλεχθει 
+        # κινητου του αφου εχει ηδη επιλεχθει και αποθηκευση τους στο selected_customer_results
         selected_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
         selected_customer_results = fetch_all_dict_list(self.connection, selected_customer_query)
 

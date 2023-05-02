@@ -1,3 +1,7 @@
+###  ΙMPORTS THAT THE PROGRAM NEEDS  ###
+########################################
+
+
 import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox as messagebox
