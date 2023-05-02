@@ -21,7 +21,7 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         # με χρήση της winfo_screenwidth() και winfo_screenheight 
         # βρισκουμε τις διαστάσεις απο την οθόνη που γινεται χρήση
         # η εφαρμογη, και βαζουμε το προραμμα να ξεκιναει στην μέση
-        # της οθόνης ασχετως σε ποια οθονη ανοιγει
+        # της οθόνης ασχετως σε τι resolution ανοιγει
         window_width = 1000
         window_height = 560
         screen_width = self.main_window.winfo_screenwidth()
@@ -348,6 +348,7 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         # Κουμπια αλλαγης καποιου στοιχείου του πελατη που καλουν την εκαστοτε συναρτηση αν πατηθουν, τα οποια στην αρχη ειναι disabled και
         # γινονται normal αν επιλεχθει καποιος πελατης
+        # τα συγκεκριμενα κουμπια εχουν ως ορισμα και ενα ξεχωριστο ονομα, για χρηση αργοτερα του ονοματος τους αναλογα με το ποιο απο αυτα πατηθηκε
         self.change_first_name_button = tk.Button(self.customers_tab, text="Change First Name", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled", command=self.change_customer_first_name,name="change first name")
         self.change_first_name_button.place(x=556, y=282)
 
