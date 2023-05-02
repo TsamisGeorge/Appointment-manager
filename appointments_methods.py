@@ -1,9 +1,10 @@
 ###      METHODS TO WORK WITH THE WIDGETS ON THE APPOINTMENT TAB ###
 ####################################################################
 from apt_imports import *
+
+# Parent Κλαση της κλασης Appointment_manager που δινει τις
+# μεθοδους διαχειρισης ενος ραντεβου
 class Appointment_methods():
-
-
 
     def check_if_apt_valid(self, apt_date, apt_duration):
         self.connection = open_connection()

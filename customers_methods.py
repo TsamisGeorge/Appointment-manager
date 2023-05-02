@@ -1,7 +1,20 @@
 ###   METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB   ###
 #################################################################
+
 from appointments_methods import *
+
+# Parent Κλαση της κλασης Appointment_manager που δινει τις
+# μεθοδους διαχειρισης ενος πελατη
+
 class Customers_methods():
+
+    # Μεθοδος δημιουργιας ενος πελατη
+    # καλειται απο το κουμπι self.create_customer_button απο το αρχειο GUI
+    # μεσα σε try except κανει τους λογικους ελεγχους για να υπαρχει valid
+    # input, αν υπαρχει οποιοδηποτε λαθος κατα την εισαγωγη σηκωνει ValueError
+    # με το εκαστοτε λαθος και το τυπωνει σαν warning messagebox με την περιγραφη
+    # του λαθους, αν ολα πανε καλα τοτε το valid_infο γινεται 1 και συνεχιζει η 
+    # εκτελεση της μεθοδου, αλλιως κλεινει η μεθοδος
     def create_customer(self):
         valid_info = 0
         try:
@@ -21,6 +34,11 @@ class Customers_methods():
             valid_info = 1
         except ValueError as e:
             messagebox.showwarning(title = "Invalid Input", message=f"{e}")
+
+        # ανοιγμα του connection, δημιουγια του ενος ερωτηματος στην βαση το οποιο
+        # ελεγχει αν υπαρχει πελατης με το ιδιο ονομα η κινητο, αν το fetch_results δεν
+        # φερει τιποτα σημαινει πως δεν υπαρχει πελατης, οποτε συνεχιζει με την εκτελεση
+        # αλλιως βγαζει μυνημα λαθους σε μορφη messagebox και κλεινει το connection
         if valid_info:
             self.connection = open_connection()
             fetch_query = f"SELECT * FROM Clients WHERE phone_number = '{phone_number}' OR email = '{email}'"
@@ -30,9 +48,12 @@ class Customers_methods():
                 messagebox.showinfo(title="Customer exists",message=f"Customer {fetch_results[0]['first_name']} {fetch_results[0]['last_name']} already exists")
                 close_connection(self.connection)
             else:
+                # Δημιουργια ερωτηματος που θα φερει το τελευταιο client_id απο την βαση δεδομενων
+                # αν υπαρχει επιστρεφομενο client_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
+                # τα στοιχεια που πηρε απο τα entries και προσθετει τον πελατη με client_id αυτο που πηρε αυξανομενο κατα 1
+                # αν δεν υπαρχουν καταγραφες τοτε δημιουργει τον πρωτο πελατη με client_id 1
                 last_customer_query = f"SELECT client_id FROM Clients ORDER BY client_id desc LIMIT 1"
                 last_entry_id = fetch_all_dict_list(self.connection, last_customer_query)
-                print()
                 if not last_entry_id:
                     final_query = f"INSERT INTO Clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
                 else:
@@ -42,9 +63,13 @@ class Customers_methods():
                 execute_query(self.connection, final_query)
                 self.connection.commit()
                 messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
+                # Κληση της self.clear_customers_entry() αν δημιουργηθει επιτυχως ενας πελατης για να αδιασουν τα entry boxes
+                # και κλεισιμο του connection
                 self.clear_customers_entry()
                 close_connection(self.connection)
     
+    # Μεθοδος για να αδειαζουν τα entry boxes του customers_tab
+    # Χρηση της .delete πανω στα entries με ορισμα την αρχη και το τελος
     def clear_customers_entry(self):
         self.first_name_entry.delete(0, tk.END)
         self.surname_entry.delete(0, tk.END)
@@ -52,7 +77,10 @@ class Customers_methods():
         self.phone_number_entry.delete(0, tk.END)
 
 
-
+    # Μεθοδος για αναζητηση ενος πελατη στο customers_tab
+    # εχει ορισμα event=None ωστε να μπορει να χρησιμοποιηθει και σαν binded event αλλα και σαν συναρτηση
+    # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry2 η οταν παταει
+    # το κουμπι self.search_customer_button2 στο customers_tab
     def search_customer_customers_tab(self, event=None):
         self.connection = open_connection()
         prompt = self.search_customer_entry2.get().lstrip().rstrip()

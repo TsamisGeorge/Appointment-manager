@@ -1,6 +1,5 @@
 BUGS
 ////
-before deleting customer, delete all previous records of appointments that are not due
 
 TEMP
 ////

@@ -29,7 +29,6 @@ def fetch_all_dict_list(connector, query):
         cursor.execute(query)
         #result set is now a list of dicts
         result_set = cursor.fetchall()
-
         return result_set
     except MYSQL.Error as e:
         print(e)
