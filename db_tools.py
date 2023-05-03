@@ -8,7 +8,8 @@ import mysql.connector as MYSQL
 def open_connection():
     try:
         return MYSQL.connect(
-            host = "localhost",
+            host = "34.163.109.227",
+            port = "3306",
             user = "amdb_user",
             password = "amdb_eap_project",
             database = "amdb"

@@ -92,13 +92,13 @@ class Appointment_methods():
         # ανοιγμα του connection, δημιουργια του ερωτηματος για τον επιλεγμενο πελατη και 
         # επιστροφη του αποτελεσματος στο curr_customer_results
         self.connection = open_connection()
-        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
+        curr_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
         curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
 
         # δημιουργια ερωτηματς που επιστρεφει ολα τα επικειμενα ραντεβου του επιλεγμενου πελατη
         # με χρηση διπλου WHERE clause με το id του πελατη και το formatted_datetime που ειναι
         # η τωρινη ημερομηνια ωστε να φερει μονο τα επικειμενα ραντεβου του
-        curr_customer_appointments_query = f"SELECT * FROM Appointments WHERE client_id = {curr_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
+        curr_customer_appointments_query = f"SELECT * FROM appointments WHERE client_id = {curr_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
         curr_customer_appointments_results = fetch_all_dict_list(self.connection, curr_customer_appointments_query)
 
         if curr_customer_appointments_results: # αν υπαρχουν επικειμενα ραντεβου
@@ -166,7 +166,7 @@ class Appointment_methods():
             
             # δημιουργια ερωτηματος για αναζητηση ενος πελατη στην βαση με where clause το prompt σαν ονομα ή 
             # email, εκτελεση του ερωτηματος και επιστροφη των αποτελεσματων στο search_customer_results
-            search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
+            search_customer_query = f"SELECT * FROM clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             
             if not search_customer_results: # αν δεν ερθουν αποτελεσματα και δεν υπαρχει πελατης
@@ -326,7 +326,7 @@ class Appointment_methods():
 
                     # δημιουργια ερωτηματος με τις νεες ημερομηνιες και ωρες το οποιο αλλαζει μονο το επιλεγμενο ραντεβου και εκτελεση του
                     # commit τις αλλαγες στην βαση, ανανεωση των ραντεβου του επιλεγμενου πελατη στο listbox, και κλεισιμο του connection
-                    update_apt_query = f"UPDATE Appointments SET appointment_date = '{apt_date}', appointment_interval = '{apt_duration}' WHERE appointment_date = '{selected_apt}'"
+                    update_apt_query = f"UPDATE appointments SET appointment_date = '{apt_date}', appointment_interval = '{apt_duration}' WHERE appointment_date = '{selected_apt}'"
                     execute_query(self.connection, update_apt_query)
                     self.connection.commit()
                     self.update_customer_appointments()
@@ -358,7 +358,7 @@ class Appointment_methods():
             self.connection = open_connection()
             selected_apt = self.selected_customer_appointments_listbox.get(self.selected_customer_appointments_listbox.curselection())
             selected_apt = selected_apt[:10] + selected_apt[12:21]
-            delete_apt_query = f"DELETE FROM Appointments WHERE appointment_date = '{selected_apt}'"
+            delete_apt_query = f"DELETE FROM appointments WHERE appointment_date = '{selected_apt}'"
             execute_query(self.connection, delete_apt_query)
             self.connection.commit()
             self.update_customer_appointments()
