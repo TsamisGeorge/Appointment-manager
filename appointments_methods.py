@@ -154,7 +154,7 @@ class Appointment_methods():
         # ελεγχος αν το prompt που δοθηκε ειναι valid, αν δεν ειναι γινεται αλλαγη των μεταβλητων
         # ενος επιλεγμενου πελατη στο appointments_tab ωστε να μην υπαρχει επιλεγμενος πελατης, εμφανιση
         # μυνηματος invalid input μεσω messagebox και κλεισιμο του connection
-        if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
+        if prompt.isalpha() or "\\" in prompt or  (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
             self.selected_customer_apt_tab.set(f"None")
             self.selected_customer_phone_number_apt_tab = 0

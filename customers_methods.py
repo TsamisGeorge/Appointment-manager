@@ -91,7 +91,7 @@ class Customers_methods():
         # λογικοι ελεγχοι του prompt, αν δεν ειναι εγκυρο εμφανιζει messagebox που γραφει invalid input, 
         # ανανεωνοι τις τιμες των μεταβλητων για την διαχειριση του επιλεγμενου
         # πελατη και μετα κλεινει το connection
-        if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
+        if prompt.isalpha() or "\\" in prompt or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
             self.selected_customer_customers_tab.set("None")
             self.selected_customer_phone_number_customers_tab = 0
