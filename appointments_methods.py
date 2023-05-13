@@ -56,12 +56,12 @@ class Appointment_methods():
             # 9 το πρωι με 9 το βραδυ
             if hour < 8: 
                 self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(9, 21) for m in range(0, 60, 10)])
-                self.time_picker['values'] +("21:00",)
+                self.time_picker['values'] +=("21:00",)
 
             # αν η ωρα ειναι μεγαλυτερη η ιση του 8 και μικροτερη του 19 φτιαχνει το timepicker με ωρες απο hour+2 μεχρι 21
             elif hour >= 8 and hour < 19:
                 self.time_picker = ttk.Combobox(self.appointments_tab, values=[f"{str(h).zfill(2)}:{str(m).zfill(2)}" for h in range(hour+2, 21) for m in range(0, 60, 10)])
-                self.time_picker['values'] +("21:00",)
+                self.time_picker['values'] +=("21:00",)
             
             # αν η ωρα ειναι μεγαλυτερη η ιση με το 19 τοτε δεν μπορει να φτιαξει επιλογες στην σημερινη ημερα
             else:
