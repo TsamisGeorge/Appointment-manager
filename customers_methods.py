@@ -42,7 +42,7 @@ class Customers_methods():
         # αλλιως βγαζει μυνημα λαθους σε μορφη messagebox και κλεινει το connection
         if valid_info:
             self.connection = open_connection()
-            fetch_query = f"SELECT * FROM Clients WHERE phone_number = '{phone_number}' OR email = '{email}'"
+            fetch_query = f"SELECT * FROM clients WHERE phone_number = '{phone_number}' OR email = '{email}'"
             fetch_results = fetch_all_dict_list(self.connection, fetch_query)
             print(fetch_results)
             if fetch_results:
@@ -53,12 +53,12 @@ class Customers_methods():
                 # αν υπαρχει επιστρεφομενο client_id στο last_entry_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
                 # τα στοιχεια που πηρε απο τα entries και προσθετει τον πελατη με client_id αυτο που πηρε αυξανομενο κατα 1
                 # αν δεν υπαρχουν καταγραφες τοτε δημιουργει τον πρωτο πελατη με client_id 1
-                last_customer_query = f"SELECT client_id FROM Clients ORDER BY client_id desc LIMIT 1"
+                last_customer_query = f"SELECT client_id FROM clients ORDER BY client_id desc LIMIT 1"
                 last_entry_id = fetch_all_dict_list(self.connection, last_customer_query)
                 if not last_entry_id:
-                    final_query = f"INSERT INTO Clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
+                    final_query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
                 else:
-                    inserting_query1 = f"INSERT INTO Clients(client_id, first_name, last_name, phone_number, email)"
+                    inserting_query1 = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email)"
                     inserting_query2 = f" VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
                     final_query = inserting_query1 + inserting_query2
                 execute_query(self.connection, final_query)
@@ -91,7 +91,7 @@ class Customers_methods():
         # λογικοι ελεγχοι του prompt, αν δεν ειναι εγκυρο εμφανιζει messagebox που γραφει invalid input, 
         # ανανεωνοι τις τιμες των μεταβλητων για την διαχειριση του επιλεγμενου
         # πελατη και μετα κλεινει το connection
-        if prompt.isalpha() or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
+        if prompt.isalpha() or "\\" in prompt or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
             self.selected_customer_customers_tab.set("None")
             self.selected_customer_phone_number_customers_tab = 0
@@ -103,7 +103,7 @@ class Customers_methods():
             # ανανεωνει τις τιμες των μεταβλητων του επιλεγμενου πελατη αναλογως για να δειξει πως
             # δεν επιλεχθηκε καποιος πελατης και βγαζει μυνημα οτι ο πελατης με το συγκεκριμενο αναγνωριστικο
             # αναλογα και την μορφη του αναγνωριστικου δεν υπαρχει   
-            search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
+            search_customer_query = f"SELECT * FROM clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             if not search_customer_results:
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
@@ -151,12 +151,12 @@ class Customers_methods():
         # μη μηδενικη τιμη επειδη για να μπορει να πατηθει αυτο το κουμπι σημαινει πως εχει επιλεχθει
         # επιτυχως ενας πελατης
         self.connection = open_connection()
-        picked_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+        picked_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
         picked_customer_results = fetch_all_dict_list(self.connection, picked_customer_query)
         # δημιουργια ερωτηματος για την ανακτηση ολων των ραντεβου του επιλεγμενου πελατη, τα οποια ειναι μεταγενεστερα της datetime.now(),
         # της τωρινης δηλαδη ημερομηνιας, και αποθηκευση τους στο appointments_results 
         # ωστε να δουμε αν ο πελατης εχει ραντεβου τα οποια δεν εχουν ολοκληρωθει ακομα
-        appointments_query = f"SELECT * FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
+        appointments_query = f"SELECT * FROM appointments WHERE client_id = {picked_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
         appointments_results = fetch_all_dict_list(self.connection, appointments_query)
         if not appointments_results: # αν δεν υπαρχουν ραντεβου τα οποια δεν ειναι ολοκληρωμενα
             # δημιουργια messagebox για ερωτηση επιβεβαιωσης
@@ -166,11 +166,11 @@ class Customers_methods():
                 # δημιουργια ερωτηματος για την διαγραφη των προηγουμενων ραντεβου του συγκεκριμενου
                 # πελατη αν υπαρχουν, ωστε να μην υπαρχουν καταγραφες στα ραντεβου με ξενο
                 # κλειδι client_id το id του πελατη προς διαγραφη, και εκτελεση του ερωτηματος
-                delete_apt_query = f"DELETE FROM Appointments WHERE client_id = {picked_customer_results[0]['client_id']}"
+                delete_apt_query = f"DELETE FROM appointments WHERE client_id = {picked_customer_results[0]['client_id']}"
                 execute_query(self.connection, delete_apt_query)
 
                 # δημιουργια ερωτηματος για διαγραφη του επιλεγμενου πελατη με χρηση το id του και εκτελεση του ερωτηματος
-                delete_customer_query = f"DELETE FROM Clients WHERE client_id = {picked_customer_results[0]['client_id']}"
+                delete_customer_query = f"DELETE FROM clients WHERE client_id = {picked_customer_results[0]['client_id']}"
                 execute_query(self.connection, delete_customer_query)
 
                 # χρηση της .commit() στο connection αντικειμενο ωστε να γινουν οι αλλαγες στην βαση
@@ -259,7 +259,7 @@ class Customers_methods():
 
         # δημιουργια ερωτηματος για ανακτηση δεδομενων του επιλεγμενου πελατη, με χρηση του μοναδικου
         # κινητου του αφου εχει ηδη επιλεχθει και αποθηκευση τους στο selected_customer_results
-        selected_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+        selected_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
         selected_customer_results = fetch_all_dict_list(self.connection, selected_customer_query)
 
         # απο τις επομενες 4 περιπτωσεις θα γινει μονο μια αναλογα με το ονομα του κουμπιου
@@ -299,7 +299,7 @@ class Customers_methods():
             try:
                 if not validate_email(user_input).email or len(user_input) > 50:
                     raise ValueError
-                see_if_email_exists_query = f"SELECT * FROM Clients WHERE email = '{user_input}'"
+                see_if_email_exists_query = f"SELECT * FROM clients WHERE email = '{user_input}'"
                 see_if_email_exists_results = fetch_all_dict_list(self.connection, see_if_email_exists_query)
                 if not see_if_email_exists_results:
                     mod_query += f" email = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
@@ -316,7 +316,7 @@ class Customers_methods():
         # αλλαγη κινητου
         elif button_name == "change phone number":
             if user_input.isalnum() and len(user_input) == 10:
-                see_if_phone_exists_query = f"SELECT * FROM Clients WHERE phone_number = '{user_input}'"
+                see_if_phone_exists_query = f"SELECT * FROM clients WHERE phone_number = '{user_input}'"
                 see_if_phone_exists_results = fetch_all_dict_list(self.connection, see_if_phone_exists_query)
                 if not see_if_phone_exists_results:
                     mod_query += f" phone_number = '{user_input}' WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
@@ -330,3 +330,72 @@ class Customers_methods():
             else:
                 messagebox.showwarning(title="Invalid Phone Number", message=f"'{user_input}' is not a valid phone number")
         close_connection(self.connection)
+
+
+
+
+########################################################################################################################################################################################################################################################################
+########################################################################################################################################################################################################################################################################
+                            ###Functions for Search Tab###
+
+########################################################################################################################################################################################################################################################################
+
+
+    #function για υπολογισμο του πληθους ημερών ανά μήνα στο search tab
+    def update_days(self,current_year,month_combo,day_combo):
+        self.selected_month=int(month_combo.get())
+        self.num_days=calendar.monthrange(current_year,self.selected_month)[1]
+        self.day_cb=day_combo['values']=list(range(1,self.num_days+1))
+
+
+
+    #function για fetch των στοιχειων απο την database
+    def appointment_date(self,rv_date):
+        self.connection=open_connection()
+        try:
+            cursor=self.connection.cursor()
+            query=f"SELECT first_name,last_name,email\
+                FROM amdb.clients\
+                JOIN appointments ON clients.client_id = appointments.client_id\
+                WHERE DATE(appointments.appointment_date)='{rv_date}'"
+            cursor.execute(query)
+            rows=cursor.fetchall()
+            set_rows={values for values in rows}
+            list_rows=list(set_rows)
+            return(list_rows)                       
+
+            cursor.close()
+        except MYSQL.Error as e:
+            print(e)
+        close_connection(self.connection)
+
+    
+    #function gia erase to stoixeion apo to treeview
+
+        children=self.tree.get_children()
+        for child in children:
+            self.tree.delete(child)
+    
+    
+    
+    
+    #function ta stoixeia na mpoun sto treeview
+
+    def add_info(self,tree_info):
+        for contact in tree_info:
+            self.tree.insert('', tk.END, values=contact)
+            
+
+
+
+    #function του πλήκτρου OK στην επιλογή ημερομηνίας στο Search Tab
+    def confirmation_button(self,year_combo,month_combo,day_combo):
+        self.delete_info()
+        self.selected_date=date(int(year_combo),int(month_combo),int(day_combo))     
+        self.add_info(self.appointment_date(self.selected_date))
+
+               
+        
+
+    
+ 
