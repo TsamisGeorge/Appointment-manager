@@ -92,7 +92,7 @@ class Appointment_methods():
         # ανοιγμα του connection, δημιουργια του ερωτηματος για τον επιλεγμενο πελατη και 
         # επιστροφη του αποτελεσματος στο curr_customer_results
         self.connection = open_connection()
-        curr_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
+        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
         curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
 
         # δημιουργια ερωτηματς που επιστρεφει ολα τα επικειμενα ραντεβου του επιλεγμενου πελατη
@@ -163,10 +163,9 @@ class Appointment_methods():
             close_connection(self.connection)
         
         else: # αν το input ειναι valid
-            
             # δημιουργια ερωτηματος για αναζητηση ενος πελατη στην βαση με where clause το prompt σαν ονομα ή 
             # email, εκτελεση του ερωτηματος και επιστροφη των αποτελεσματων στο search_customer_results
-            search_customer_query = f"SELECT * FROM clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
+            search_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             
             if not search_customer_results: # αν δεν ερθουν αποτελεσματα και δεν υπαρχει πελατης
@@ -188,7 +187,6 @@ class Appointment_methods():
                 self.selected_customer_apt_tab.set(f"{search_customer_results[0]['first_name']} {search_customer_results[0]['last_name']}")
                 self.selected_customer_phone_number_apt_tab = f"{search_customer_results[0]['phone_number']}"
                 self.create_apt_button.configure(state="normal",relief="raised")
-
                 # κληση της self.update_customer_appointments() για να ενημερωθει το listbox με επικειμενα ραντεβου ενος
                 # επιλεγμενου πελατη
                 self.update_customer_appointments()
@@ -244,7 +242,7 @@ class Appointment_methods():
                 
                 # δημιουργια query για τα στοιχεια του επιλεγμενου πελατη με χρηση του self.selected_customer_phone_number_apt_tab
                 # και εκτελεση του ερωτηματος και επιστροφη του αποτελεσματος στο current_customer_results
-                current_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
+                current_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
                 current_customer_results = fetch_all_dict_list(self.connection, current_customer_query)
                 
                 # δημιουργια query για επιστροφη του τελευταιου appointment_id και εκτελεση του
