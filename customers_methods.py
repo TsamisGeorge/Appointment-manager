@@ -180,6 +180,8 @@ class Customers_methods():
                 messagebox.showinfo(title="Customer Deleted", message=f"Customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} has been successfully deleted")
 
                 # ανανεωση των μεταβλητων του επιλεγμενου πελατη ωστε να μην υπαρχει επιλεγμενος πελατης μετα την διαγραφη
+                if self.selected_customer_phone_number_customers_tab == self.selected_customer_phone_number_apt_tab:
+                    self.update_picked_customer_to_none()
                 self.selected_customer_phone_number_customers_tab = 0
                 self.selected_customer_customers_tab.set("None")
                 # ανανεωση των κουμπιων
@@ -325,8 +327,12 @@ class Customers_methods():
                         execute_query(self.connection, mod_query)
                         self.connection.commit()
                         messagebox.showinfo(title="Changed Successfully", message="Phone number has been changed successfully")
+                        if self.selected_customer_phone_number_customers_tab == self.selected_customer_phone_number_apt_tab:
+                            self.selected_customer_phone_number_apt_tab = f"{user_input}"
                         self.selected_customer_phone_number_customers_tab = f"{user_input}"
                         self.update_customer_buttons()
+                else:
+                    messagebox.showwarning(title="Invalid Phone Number", message=f"'{user_input}' is taken")
             else:
                 messagebox.showwarning(title="Invalid Phone Number", message=f"'{user_input}' is not a valid phone number")
         close_connection(self.connection)

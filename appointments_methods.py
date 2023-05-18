@@ -108,11 +108,11 @@ class Appointment_methods():
 
             for appointment in curr_customer_appointments_results: # για καθε ραντεβου μεσα στο curr_customer_appointments_results
                 # ανακτηση της χρονικης διαρκειας του ραντεβου και μετατροπη της σε time αντικειμενο
-                appointment_duration = appointment['appointment_interval'].strftime('%H:%M:%S')
-
+                appointment_date = datetime.strptime(appointment['appointment_date'], "%Y-%m-%d %H:%M:%S")
+                appointment_duration = datetime.strptime(appointment['appointment_interval'], "%Y-%m-%d %H:%M:%S").time()
                 # .insert στο Listbox την συμβολοσειρα f"{appointment['appointment_date'].date()}   {appointment['appointment_date'].time()}  -  {appointment_duration}"
                 # η οποια ειναι ενα ραντεβου του επιλεγμενου πελατη
-                self.selected_customer_appointments_listbox.insert(tk.END, f"{appointment['appointment_date'].date()}   {appointment['appointment_date'].time()}  -  {appointment_duration}")
+                self.selected_customer_appointments_listbox.insert(tk.END, f"{appointment_date.date()}   {appointment_date.time()}  -  {appointment_duration}")
         
         else: # αν δεν υπαρχουν ραντεβου απλα διαγραφη των ραντεβου του προηγουμενου επιλεγμενου πελατη
             self.selected_customer_appointments_listbox.delete(0, tk.END)
@@ -140,6 +140,13 @@ class Appointment_methods():
             self.delete_apt_button.configure(relief = "sunken", state="disabled")
 
 
+    def update_picked_customer_to_none(self):
+        self.selected_customer_apt_tab.set(f"None")
+        self.selected_customer_phone_number_apt_tab = 0
+        self.create_apt_button.configure(state="disabled",relief="sunken")
+        self.selected_customer_appointments_listbox.delete(0, tk.END)
+
+
 
     # Μεθοδος για αναζητηση ενος πελατη στο appointments_tab
     # εχει ορισμα event=None ωστε να μπορει να χρησιμοποιηθει και σαν binded event αλλα και σαν συναρτηση
@@ -156,10 +163,7 @@ class Appointment_methods():
         # μυνηματος invalid input μεσω messagebox και κλεισιμο του connection
         if prompt.isalpha() or "\\" in prompt or  (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_apt_tab.set(f"None")
-            self.selected_customer_phone_number_apt_tab = 0
-            self.create_apt_button.configure(state="disabled",relief="sunken")
-            self.selected_customer_appointments_listbox.delete(0, tk.END)
+            self.update_picked_customer_to_none()
             close_connection(self.connection)
         
         else: # αν το input ειναι valid
@@ -174,10 +178,7 @@ class Appointment_methods():
                 # για να μην υπαρχει επιλεγμενος πελατης, αλλαγη της καταστασης του κουμπιου δημιουργιας ενος ραντεβου 
                 # σε disabled και διαγραφη των ραντεβου του πρωην επιλεγμενου πελατη απο το listbox των ραντεβου
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_apt_tab.set(f"None")
-                self.selected_customer_phone_number_apt_tab = 0
-                self.create_apt_button.configure(state="disabled",relief="sunken")
-                self.selected_customer_appointments_listbox.delete(0, tk.END)
+                self.update_picked_customer_to_none()
 
             else: # αν ερθουν αποτελεσματα και υπαρχει πελατης
 
@@ -277,7 +278,9 @@ class Appointment_methods():
                 # μετρηση των δευτερολεπτων απο την διαφορα της διαρκειας του ραντεβου με την ημερομηνια και ωρα του
                 # ραντεβου, εμφανιση messagebox και χρηση του total_seconds για να αναδειχθει οτι υπαρχει ραντεβου απο την
                 # ημερομηνια του πρωτο ραντεβου που βρεθηκε για total_seconds//60 λεπτα
-                total_seconds = (appointmnents_results[0]['appointment_interval'] - appointmnents_results[0]['appointment_date']).total_seconds()
+                appointment_time = datetime.strptime(appointmnents_results[0]['appointment_interval'], "%Y-%m-%d %H:%M:%S")
+                appointment_duration = datetime.strptime(appointmnents_results[0]['appointment_date'], "%Y-%m-%d %H:%M:%S")
+                total_seconds = (appointment_time - appointment_duration).total_seconds()
                 messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} for {int(total_seconds//60)} minutes''')
             close_connection(self.connection)
 
@@ -334,9 +337,10 @@ class Appointment_methods():
                     total_seconds = apt_min.total_seconds()
                     messagebox.showinfo(title="Appointment Rescheduled", message=f"Appointment successfully rescheduled at {apt_date} for {int(total_seconds//60)} minutes")
             else: # αν το ραντεβου δεν ειναι valid(υπαρχουν ραντεβου στο appointmnents_results)
-
+                appointment_time = datetime.strptime(appointmnents_results[0]['appointment_interval'], "%Y-%m-%d %H:%M:%S")
+                appointment_duration = datetime.strptime(appointmnents_results[0]['appointment_date'], "%Y-%m-%d %H:%M:%S")
                 # εμφανιση messagebox που αναφερει πως υπαρχει ηδη ραντεβου στις επιλεγμενες ωρες με λεπτομεριες του ραντεβου
-                total_seconds = (appointmnents_results[0]['appointment_interval'] - appointmnents_results[0]['appointment_date']).total_seconds()
+                total_seconds = (appointment_time - appointment_duration).total_seconds()
                 messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} for {int(total_seconds//60)} minutes''')
 
 

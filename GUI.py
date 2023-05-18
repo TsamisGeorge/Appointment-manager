@@ -127,7 +127,6 @@ class Appointment_manager(Appointment_methods, Customers_methods):
         self.selected_customer_apt_tab = tk.StringVar()
         self.selected_customer_apt_tab.set("None")
         self.selected_customer_phone_number_apt_tab = 0
-        self.selected_appointment_date = None
 
 
         # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN CUSTOMERS TAB #
