@@ -4,19 +4,19 @@
 
 from apt_imports import *
 
-# Parent Κλαση της κλασης Appointment_manager που δινει τις
-# μεθοδους διαχειρισης ενος ραντεβου
 class Appointment_methods():
+    '''Parent Κλαση της κλασης Appointment_manager που δινει τις
+    μεθοδους διαχειρισης ενος ραντεβου'''
 
-
-    # μεθοδος ελεγχου αν ενα ραντεβου ειναι valid, δηλαδη αν δεν υπαρχει αλληλοεπικαλυψη μεταξυ του
-    # επιλεγμενου ραντεβου και των ραντεβου στη βαση
-    # αυτο γινεται δημιουργωντας ενα ερωτηματο το οποιο φαιρνει ολα τα δεδομενα απο το table appointments
-    # με χρηση τετραπλου WHERE clause αν οποιοδηποτε απο τα στοιχεια ειτε του επιλεγμενου ραντεβου ειτε
-    # των ηδη υπαρχον ραντεβου της βασης, ειναι αναμεσα το ενα στο αλλο, αν οποιαδηποτε απο τις OR συνθηκες ειναι true
-    # το apt_results περιεχει ραντεβου, αν καμια τοτε το apt_results δεν περιεχει τιποτα, σε καθε περιπτωση επιστρεφεται
-    # για μελλοντικη χρηση
     def check_if_apt_valid(self, apt_date, apt_duration):
+        '''Μεθοδος ελεγχου αν ενα ραντεβου ειναι valid, δηλαδη αν δεν υπαρχει αλληλοεπικαλυψη μεταξυ του
+           επιλεγμενου ραντεβου και των ραντεβου στη βαση, παιρνει σαν ορισμα την αρχη και την διαρκεια του ραντεβου'''
+        
+        # δημιουργει ενα ερωτημα το οποιο φαιρνει ολα τα δεδομενα απο το table appointments
+        # με χρηση τετραπλου WHERE clause αν οποιοδηποτε απο τα στοιχεια ειτε του επιλεγμενου ραντεβου ειτε
+        # των ηδη υπαρχον ραντεβου της βασης, ειναι αναμεσα το ενα στο αλλο, αν οποιαδηποτε απο τις OR συνθηκες ειναι true
+        # το apt_results περιεχει ραντεβου, αν καμια τοτε το apt_results δεν περιεχει τιποτα, σε καθε περιπτωση επιστρεφεται
+        # για μελλοντικη χρηση
         self.connection = open_connection()
         appointments_query = f'''SELECT * FROM appointments WHERE appointment_date BETWEEN '{apt_date}' AND '{apt_duration}'
         OR appointment_interval BETWEEN '{apt_date}' AND '{apt_duration}' OR '{apt_date}' BETWEEN appointment_date AND appointment_interval 
@@ -26,13 +26,18 @@ class Appointment_methods():
         return apt_results
 
 
-    # μεθοδος ανανεωσης του time_picker
-    # οταν επιλεγεται μια ημερομηνια απο το Calendar καλειται
-    # η συγκεκριμενη μεθοδος, και ανανεωνει τις ωρες που μπορει να
-    # κλεισει ενα ραντεβου ο χρηστης του προγραμματος αναλογα με
-    # την επιλεγμενη ημερα, παιρνει σαν προαιρετικο ορισμα το event
-    # για να μπορει να γινει και χρηση του ως συναρτηση
     def update_time_picker(self, event=None):
+        '''Μεθοδος ανανεωσης του time_picker, αναλογα με το ποια ημερα ειναι
+        επιλεγμενη στο Calendar, η κληση του μπορει να γινει και ως event'''
+
+
+        # οταν επιλεγεται μια ημερομηνια απο το Calendar καλειται
+        # η συγκεκριμενη μεθοδος, και ανανεωνει τις ωρες που μπορει να
+        # κλεισει ενα ραντεβου ο χρηστης του προγραμματος αναλογα με
+        # την επιλεγμενη ημερα, παιρνει σαν προαιρετικο ορισμα το event
+        # για να μπορει να γινει και χρηση του ως συναρτηση
+
+
         # ανακτηση του Input της επιλεγμενης ημερας απο το Calendar
         # και δημιουργια ενος date αντικειμενου με format '%Y-%m-%d'
         # με χρηση της datetime.strptime().date()
@@ -40,7 +45,7 @@ class Appointment_methods():
         date_format = '%Y-%m-%d'
         date_obj = datetime.strptime(date_string, date_format).date()
         
-        # αν το date αντικειμενο που ανακτηθηκε ειναι ή εκαστοτε σημερινή ημέρα
+        # αν το date αντικειμενο που ανακτηθηκε ειναι η εκαστοτε σημερινή ημέρα
         if date_obj == datetime.today().date():
             # καταστροφη του προηγουμενου time picker combobox 
             self.time_picker.destroy()
@@ -79,9 +84,9 @@ class Appointment_methods():
         self.time_picker.configure(state="readonly")
 
 
-    # μεθοδος ενημερωσης του Listbox που περιεχει τα ραντεβου ενος επιλεγμενου πελατη
     def update_customer_appointments(self):
-
+        '''Μεθοδος ενημερωσης του Listbox που περιεχει τα ραντεβου ενος επιλεγμενου πελατη'''
+        
         # κληση της datetime.now() για ανακτηση της τωρινης ημερομηνιας και
         # χρηση του .strftime με ορισμα το format "%Y-%m-%d %H:%M:%S"
         # για την δημιουργια ενος datetime αντικειμενου
@@ -122,15 +127,14 @@ class Appointment_methods():
         close_connection(self.connection)
 
 
-
-    # μεθοδος για ενημερωση των κουμπιων στο appointments_tab
-    # παιρνει σαν προαιρετικο ορισμα ενα event, ωστε να μπορει
-    # να χρησιμοποιηθει και σαν συναρτηση αλλα και σαν binded 
-    # event, γινεται ανακτηση του επιλεγμενο ραντεβου με χρηση του
-    # self.selected_customer_appointments_listbox.curselection()
-    # αν επιστραφη τιμη στο apt_selected τοτε θετει τα κουμπια να 
-    # ειναι normal, αλλιως τα θετει να ειναι disabled
     def update_apt_manage_buttons(self, event=None):
+        '''Μεθοδος για ενημερωση των κουμπιων που διαχειριζονται τα reschedule
+         delete κουμπια στο appointments_tab, μπορει να χρησιμοποιειθει και ως event'''
+
+        # γινεται ανακτηση του επιλεγμενου ραντεβου με χρηση του
+        # self.selected_customer_appointments_listbox.curselection()
+        # αν επιστραφη τιμη στο apt_selected τοτε θετει τα κουμπια να 
+        # ειναι normal, αλλιως τα θετει να ειναι disabled
         apt_selected = self.selected_customer_appointments_listbox.curselection()
         if apt_selected:
             self.reschedule_apt_button.configure(relief = "raised", state="normal")
@@ -141,6 +145,7 @@ class Appointment_methods():
 
 
     def update_picked_customer_to_none(self):
+        '''Μεθοδος ενημερωσης των widget ενος επιλεγμενου πελατη στο appointments_tab'''
         self.selected_customer_apt_tab.set(f"None")
         self.selected_customer_phone_number_apt_tab = 0
         self.create_apt_button.configure(state="disabled",relief="sunken")
@@ -148,11 +153,12 @@ class Appointment_methods():
 
 
 
-    # Μεθοδος για αναζητηση ενος πελατη στο appointments_tab
-    # εχει ορισμα event=None ωστε να μπορει να χρησιμοποιηθει και σαν binded event αλλα και σαν συναρτηση
-    # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry η οταν παταει
-    # το κουμπι self.search_customer_button στο appointments_tab
     def search_customer_apt_tab(self, event=None):
+        '''Μεθοδος για αναζητηση ενος πελατη στο appointments_tab, μπορει να χρησιμοποιηθει και σαν event'''
+        # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry η οταν παταει
+        # το κουμπι self.search_customer_button στο appointments_tab
+
+
         # ανοιγμα του connection, ανακτηση του prompt απο το self.search_customer_entry αφου γινει
         # lstrip και rstrip για να φυγουν τα περιττα κενα
         self.connection = open_connection()
@@ -192,7 +198,7 @@ class Appointment_methods():
                 # επιλεγμενου πελατη
                 self.update_customer_appointments()
             close_connection(self.connection)
-        
+
         # κληση της self.update_apt_manage_buttons() σε καθε περιπτωση για να μπορουν η να μην μπορουν
         # να πατηθουν τα κουμπια αλλαγης η διαγραφης ενος ραντεβου
         self.update_apt_manage_buttons()
@@ -200,8 +206,8 @@ class Appointment_methods():
 
 
 
-    # μεθοδος για την δημιουργια ενος ραντεβου
     def create_appointment(self):
+        '''Mεθοδος για την δημιουργια ενος νεου ραντεβου για τον επιλεγμενο πελατη'''
 
         # ανακτηση τιμης απο το Calendar για ημερομηνια του ραντεβου
         selected_date = self.date_picker.selection_get()
@@ -286,8 +292,8 @@ class Appointment_methods():
 
 
 
-    # μεθοδος για επαναπρογραμματισμο ενος ραντεβου
     def reschedule_apt_command(self):
+        '''Mεθοδος για επαναπρογραμματισμο ενος επιλεγμενου ραντεβου απο τον επιλεγμενο πελατη'''
 
         # ανακτηση τιμων απο date, time pickers
         selected_date = self.date_picker.selection_get()
@@ -345,8 +351,8 @@ class Appointment_methods():
 
 
 
-    # μεθοδος διαγραφης ενος ραντεβου
     def delete_apt_command(self):
+        '''Mεθοδος για διαγραφη ενος επιλεγμενου ραντεβου απο τον επιλεγμενο πελατη'''
 
         # messagebox για επαληθευση διαγραφης
         confirm_delete = messagebox.askyesno(title="Confirmation", message="Are you sure you want to delete this appointment?")

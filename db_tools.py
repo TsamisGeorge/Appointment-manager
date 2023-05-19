@@ -4,45 +4,51 @@
 
 import sqlite3
 
-#open conn with the db func
+
 def open_connection():
+    '''Μεθοδος που επιστρεφει ενα αντικειμενο τυπου connection
+    που αντιπροσωπευει την συνδεση με την βαση δεδομενων που εχει δηλωθει'''
     try:
-        # Άνοιγμα του connection με χρήση της .connect() και όρισμα το .db αρχείο που θέλουμε να ανοίξουμε
         conn = sqlite3.connect("db_1.db")
-        # επιστροφή του connection, εκτός αν κάτι πάει λάθος τότε τυπώνεται μύνημα του λάθους
         return conn
     except sqlite3.Error as e:
         print(f"Error: {e}")
 
 
 def close_connection(connector):
+    '''Μεθοδος που κλεινει την συνδεση με την βαση δεδομενων,
+    παιρνει σαν παραμετρο αντικειμενο τυπου sqlite3.connect()'''
     try:
         connector.close()      
     except sqlite3.Error as e:
         print(e)
 
 
-#returns a list of dicts after the execution of a specified query passed as an argument together with the conn object
+
 def fetch_all_dict_list(connector, query):
+    '''Μεθοδος που επιστρεφει λιστα με λεξικα, απο την βαση δεδομενων που
+    δινεται σαν ορισμα, εκτελωντας το query που δινεται σαν ορισμα'''
     try:
         cursor = connector.cursor()
         cursor.execute(query)
 
-        # list comp to get the column names
+        # Συνεπτυγμενη λιστα που περιεχει τα αναγνωριστικα των στηλων
         columns = [column[0] for column in cursor.description]
 
-        # fetching all rows and converting them into a dict
+        # Συνεπτυγμενη λιστα που παιρνει τα δεδομενα μετα απο την εκτελεση
+        # του query, και για καθε καταγραφη μεσα στο zip(columns, row) που ειναι
+        # iterator που περιεχει αναγνωριστικο στηλης και την εκαστοτε καταγραφη,
+        # δημιουργει ενα λεξικο με κλειδι το αναγνωριστικο και τιμη την καταγραφη       
         result_dict = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
-        #returning the resulting dict
         return result_dict
     except sqlite3.Error as e:
         print(e)
 
 
 def execute_query(connector, query):
+    '''Συναρτηση που εκτελει το query που δινεται σαν ορισμα'''
     try:
-
         cursor = connector.cursor()
         cursor.execute(query)
         cursor.close()

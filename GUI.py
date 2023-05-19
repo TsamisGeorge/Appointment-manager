@@ -5,10 +5,11 @@
 from appointments_methods import *
 from customers_methods import *
 
-# Η κλαση Appointment_manager κλειρονομει μεθοδους διαχειρισης ενος 
-# ραντεβου η ενος πελατη απο τις κλασεις Appointments_methods και
-# Customers_methods απο τα εκαστοτε αρχεια
+
 class Appointment_manager(Appointment_methods, Customers_methods):
+    '''Η κλαση Appointment_manager κλειρονομει μεθοδους διαχειρισης ενος 
+        ραντεβου η ενος πελατη απο τις κλασεις Appointments_methods και
+        Customers_methods'''
     def __init__(self):
         #     MAIN WINDOW    #
         ######################

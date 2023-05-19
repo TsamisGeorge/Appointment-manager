@@ -4,19 +4,19 @@
 
 from appointments_methods import *
 
-# Parent Κλαση της κλασης Appointment_manager που δινει τις
-# μεθοδους διαχειρισης ενος πελατη
-
 class Customers_methods():
-
-    # Μεθοδος δημιουργιας ενος πελατη
-    # καλειται απο το κουμπι self.create_customer_button απο το αρχειο GUI
-    # μεσα σε try except κανει τους λογικους ελεγχους για να υπαρχει valid
-    # input, αν υπαρχει οποιοδηποτε λαθος κατα την εισαγωγη σηκωνει ValueError
-    # με το εκαστοτε λαθος και το τυπωνει σαν warning messagebox με την περιγραφη
-    # του λαθους, αν ολα πανε καλα τοτε το valid_infο γινεται 1 και συνεχιζει η 
-    # εκτελεση της μεθοδου, αλλιως κλεινει η μεθοδος
+    '''Parent Κλαση της κλασης Appointment_manager που δινει τις
+       μεθοδους διαχειρισης ενος πελατη'''
+    
     def create_customer(self):
+        '''Μεθοδος δημιουργιας ενος πελατη'''
+
+        # καλειται απο το κουμπι self.create_customer_button απο το αρχειο GUI
+        # μεσα σε try except κανει τους λογικους ελεγχους για να υπαρχει valid
+        # input, αν υπαρχει οποιοδηποτε λαθος κατα την εισαγωγη σηκωνει ValueError
+        # με το εκαστοτε λαθος και το τυπωνει σαν warning messagebox με την περιγραφη
+        # του λαθους, αν ολα πανε καλα τοτε το valid_infο γινεται 1 και συνεχιζει η 
+        # εκτελεση της μεθοδου, αλλιως κλεινει η μεθοδος
         valid_info = 0
         try:
             name = self.first_name_entry.get().lstrip().rstrip()
@@ -69,20 +69,23 @@ class Customers_methods():
                 self.clear_customers_entry()
                 close_connection(self.connection)
     
-    # Μεθοδος για να αδειαζουν τα entry boxes του customers_tab
-    # Χρηση της .delete πανω στα entries με ορισμα την αρχη και το τελος
     def clear_customers_entry(self):
+        '''Μεθοδος για να αδειαζουν τα entry boxes του customers_tab'''
+
+        # Χρηση της .delete πανω στα entries με ορισμα την αρχη και το τελος
         self.first_name_entry.delete(0, tk.END)
         self.surname_entry.delete(0, tk.END)
         self.email_entry.delete(0, tk.END)
         self.phone_number_entry.delete(0, tk.END)
 
 
-    # Μεθοδος για αναζητηση ενος πελατη στο customers_tab
-    # εχει ορισμα event=None ωστε να μπορει να χρησιμοποιηθει και σαν binded event αλλα και σαν συναρτηση
-    # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry2 η οταν παταει
-    # το κουμπι self.search_customer_button2 στο customers_tab
     def search_customer_customers_tab(self, event=None):
+        '''Μεθοδος για αναζητηση ενος πελατη στο customers_tab, μπορει να χρησιμοποιηθει και σαν event'''
+
+        # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry2 η οταν παταει
+        # το κουμπι self.search_customer_button2 στο customers_tab
+
+
         # Ανοιγμα του connection, το prompt γινεται οτι υπηρχε στο self.search_customer_entry2 αφου εχει γινει lstrip
         # και rstrip για τα κενα αριστερα και δεξια απο το input
         self.connection = open_connection()
@@ -121,10 +124,13 @@ class Customers_methods():
         self.update_customer_buttons()
     
 
-    # μεθοδος που ανανεωνει τα κουμπια στο customers_tab αναλογως με το αν εχει
-    # επιλεχθει επιτυχως ενας πελατης η οχι, κανοντας τον ελεγχο αν το 
-    # self.selected_customer_phone_number_customers_tab ειναι ισο με 0 η οχι
+
     def update_customer_buttons(self):
+        '''Μεθοδος ενημερωσης των κουμπιων που αλλαζουν τα στοιχεια
+           ενος πελατη στο customers_tab'''
+        
+        # κανοντας τον ελεγχο αν το self.selected_customer_phone_number_customers_tab 
+        # ειναι ισο με 0 ή οχι, φαινεται αν εχει επιλεχθει ενας πελατης ή οχι
         if self.selected_customer_phone_number_customers_tab == 0:
             self.delete_customer_button.configure(state="disabled",relief="sunken")
             self.change_first_name_button.configure(state="disabled", relief="sunken")
@@ -139,10 +145,11 @@ class Customers_methods():
             self.change_phone_number_button.configure(state="normal", relief="raised")
 
 
-    # μεθοδος διαγραφης ενος πελατη
-    # κληση της datetime.now() και format σε μορφη DATETIMΕ αντικειμενου της SQL ωστε
-    # να χρισημοποιηθει σε επομενο ερωτημα
     def delete_customer_command(self):
+        '''Μεθοδος διαγραφης ενος πελατη'''
+
+        # κληση της datetime.now() και format σε μορφη DATETIMΕ αντικειμενου της SQL ωστε
+        # να χρισημοποιηθει σε επομενο sql ερωτημα
         current_datetime = datetime.now()
         formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -191,12 +198,15 @@ class Customers_methods():
         close_connection(self.connection)
 
 
-    # συναρτηση που φτιαχνει ενα toplevel window αφου πατηθει ενα απο τα 4 κουμπια
-    # διαχειρισης των credential ενος πελατη
-    # παιρνει ως ορισμα το ονομα του κουμπιου που πατηθηκε για το χρισημοποιησει για αλλα αντικειμενα
-    # γραφικου περιβαλλοντος
     def make_toplevel_window(self, button_name):
+        '''Μεθοδος που φτιαχνει ενα toplevel window πανω απο το main window, 
+        για την διαχειριση της αλλαγης ενος στοιχειου του επιλεγμενου πελατη στο customers_tab'''
+        # αφου πατηθει ενα απο τα 4 κουμπια
+        # διαχειρισης των credential ενος πελατη
+        # παιρνει ως ορισμα το ονομα του κουμπιου που πατηθηκε για το χρισημοποιησει για αλλα αντικειμενα
+        # γραφικου περιβαλλοντος
 
+        
         # δημιουργια του toplevel window
         self.change_customer_info_window = tk.Toplevel()
 
@@ -209,6 +219,7 @@ class Customers_methods():
         y = int((screen_height/2) - (window_height/2))
         self.change_customer_info_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
+        # κανουμε τα μεγεθη του window να ειναι αμεταβλητα
         self.change_customer_info_window.minsize(window_width, window_height)
         self.change_customer_info_window.maxsize(window_width, window_height)
 
@@ -232,25 +243,31 @@ class Customers_methods():
         self.change_customer_info_entry.bind("<Return>", lambda event: self.commit_changes(button_name, event))
 
 
-    # συναρτησεις που καλουν την self.make_toplevel_window με ορισμα το ονομα του κουμπιου 
-    # που πατηθηκε, οι συναρτησεις αυτες ειναι command συναρτησεις των τεσσαρων κουμπιων 
+    # Μεθοδοι που καλουν την self.make_toplevel_window με ορισμα το ονομα του κουμπιου 
+    # που πατηθηκε, αυτες ειναι command μεθοδοι των τεσσαρων κουμπιων 
     # διαχειρισης των στοιχειων ενος επιλεγμενου πελατη
     def change_customer_first_name(self):
+        '''Μεθοδος αλλαγης ονοματος του επιλεγμενου πελατη'''
         self.make_toplevel_window(self.change_first_name_button.winfo_name())
     def change_customer_surname(self):
+        '''Μεθοδος αλλαγης επιθετου του επιλεγμενου πελατη'''
         self.make_toplevel_window(self.change_surname_button.winfo_name())
     def change_customer_email(self):
+        '''Μεθοδος αλλαγης email του επιλεγμενου πελατη'''
         self.make_toplevel_window(self.change_email_button.winfo_name())
     def change_customer_phone_number(self):
+        '''Μεθοδος αλλαγης κινητου τηλεφωνου του επιλεγμενου πελατη'''
         self.make_toplevel_window(self.change_phone_number_button.winfo_name())
 
 
 
 
-    # συναρτηση για δευσμευση της αλλαγης και αρχης των λογικων ελεγχων
-    # παιρνει ως ορισμα το ονομα του κουμπιου και σαν μη αναγκαστικο ορισμα event
-    # ωστε να μπορει να χρησιμοποιηθει και σαν command σε κουμπι αλλα και σαν bind
     def commit_changes(self, button_name, event=None):
+        '''Μεθοδος για δευσμευση της αλλαγης ενος στοιχειου του επιλεγμενου πελατη, 
+        μπορει να χρησιμοποιηθει και σαν event και παιρνει σαν ορισμα το ονομα του κουμπιου
+        που πατηθηκε'''
+
+        
         # δημιουργια ενος ερωτηματος που αλλαζει αναλογα το ονομα του κουμπιου
         # που εχει πατηθει, ανοιγμα του connection και ανακτηση του user_input απο το
         # self.change_customer_info_entry, μετα απο lstrip και rstrip ωστε να φυγουν τα περιττα
