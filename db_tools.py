@@ -9,7 +9,7 @@ def open_connection():
     '''Μεθοδος που επιστρεφει ενα αντικειμενο τυπου connection
     που αντιπροσωπευει την συνδεση με την βαση δεδομενων που εχει δηλωθει'''
     try:
-        conn = sqlite3.connect("db_1.db")
+        conn = sqlite3.connect("db_2.db")
         return conn
     except sqlite3.Error as e:
         print(f"Error: {e}")
