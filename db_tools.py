@@ -40,7 +40,7 @@ def fetch_all_dict_list(connector, query):
         # iterator που περιεχει αναγνωριστικο στηλης και την εκαστοτε καταγραφη,
         # δημιουργει ενα λεξικο με κλειδι το αναγνωριστικο και τιμη την καταγραφη       
         result_dict = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
+        
         return result_dict
     except sqlite3.Error as e:
         print(e)
