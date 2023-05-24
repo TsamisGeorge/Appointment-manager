@@ -4,9 +4,11 @@
 
 from appointments_methods import *
 from customers_methods import *
+from search_methods import *
+from smtp import *
 
 
-class Appointment_manager(Appointment_methods, Customers_methods):
+class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,SMTP_Methods):
     '''Η κλαση Appointment_manager κλειρονομει μεθοδους διαχειρισης ενος 
         ραντεβου η ενος πελατη απο τις κλασεις Appointments_methods και
         Customers_methods'''
@@ -364,6 +366,121 @@ class Appointment_manager(Appointment_methods, Customers_methods):
 
         self.change_phone_number_button = tk.Button(self.customers_tab, text="Change Phone Number", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled",command=self.change_customer_phone_number,name="change phone number")
         self.change_phone_number_button.place(x=702, y=282)
+
+
+###  SEARCH TAB WIDGETS  ###
+###############################
+
+        #Calendar label
+        self.date_label=tk.Label(self.search_tab,text="Peak a date",font=("Segoe UI", 12))
+        self.date_label.place(x=5,y=5)
+
+        #########Προσθήκη 1ου Combobox YEAR#######################################
+        #LABEL
+        self.year_label=tk.Label(self.search_tab,text="YEAR",font=("Segoe UI", 9))
+        self.year_label.place(x=5,y=30)
+
+        #create combobox
+        selected_year=tk.StringVar()
+        year_cb=ttk.Combobox(self.search_tab,textvariable=selected_year)
+
+        ##combobox values
+        current_year=datetime.now().year
+        year_cb['values']=list(range(current_year,current_year+200))
+
+        #prevent typing a value
+        year_cb['state']='readonly'
+
+        year_cb.place(x=5,y=50,width=80)
+
+        ########Προσθήκη 2ου Combobox Month#######################################
+        self.month_label=tk.Label(self.search_tab,text='MONTH',font=("Segoe UI", 9))
+        self.month_label.place(x=90,y=30)
+
+        #create combobox
+        selected_month=tk.StringVar()
+        month_cb=ttk.Combobox(self.search_tab,textvariable=selected_month)
+
+        #combobox values
+        month_cb['values']=list(range(1,12+1))
+
+        #prevent typing a value
+        month_cb['state']='readonly'
+
+        month_cb.place(x=90,y=50,width=60)
+
+
+        #####Προσθήκη 3ου Combobox DAY#######################################
+        self.day_label=tk.Label(self.search_tab,text="DAY",font=("Segoe UI", 9))
+        self.day_label.place(x=160,y=30)
+
+        #create combobox
+        selected_day=tk.StringVar()
+        day_cb=ttk.Combobox(self.search_tab,textvariable=selected_day)
+
+        #combobox values
+
+        month_cb.bind('<<ComboboxSelected>>',lambda event:self.update_days(current_year,month_cb,day_cb))
+
+        #prevent typing a value
+        day_cb['state']='readonly'
+
+        day_cb.place(x=160,y=50,width=60)
+
+        #######Προσθήκη πληκτρου ΟΚ##########################
+        
+        confirm_button=tk.Button(self.search_tab,text="OK",command=lambda:self.confirmation_button(year_cb.get(),month_cb.get(),day_cb.get()))
+        confirm_button.place(x=5,y=80)
+
+
+
+################προσθήκη Treeview#############################################
+
+
+        #προσθήκη Treeview
+
+
+        columns = ("first_name","last_name","email","time")
+        self.tree = ttk.Treeview(self.search_tab,columns=columns,show="headings")
+
+        #definition of headings
+        self.tree.heading("first_name",text="First Name")
+        self.tree.heading("last_name",text="Last Name")
+        self.tree.heading("email",text="Email")
+        self.tree.heading("time",text="Time")
+
+        #definition of column width
+        self.tree.column('first_name',width=150)
+        self.tree.column('last_name',width=150)
+        self.tree.column('email',width=150)
+        self.tree.column('time',width=150)
+
+
+        #scrolbar
+        scrollbar = ttk.Scrollbar(self.search_tab, orient='vertical', command=self.tree.yview)
+        scrollbar.place(x=980,y=25,height=220)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+        
+
+
+        self.tree.place(x=380,y=25)
+
+###################################################################################################################################
+#################SEND NOTIFICATION by EMAIL########################################################################################
+###################################################################################################################################
+
+
+        #prosthiki button send notification
+        self.notification_button=tk.Button(self.search_tab,text="Send Email",command=self.send_notification)
+        self.notification_button.place(x=380,y=250)
+
+###################################################################################################################################
+#################                      PRINT APPOINTMENTS BY DATE        ##########################################################
+###################################################################################################################################
+
+        #prosthiki button print appointmnts
+        self.print_button=tk.Button(self.search_tab,text='Print Appointments',command=self.print_appointment)
+        self.print_button.place(x=840,y=250)
 
 
 
