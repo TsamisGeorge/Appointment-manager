@@ -11,5 +11,3 @@ Appointments tab is used to handle appointments of a specific existing customer,
 (rescheduling of an appointment draws values from the appointment time and appointment duration fields).
 
 Customers tab is used to handle customers, searching a specific existing customer with phone or email to change or delete him, or creating a new one.
-
-The other tabs are currently WIP
