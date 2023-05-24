@@ -86,10 +86,6 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         search_icon = Image.open("pics/search.png")
         search_icon = search_icon.resize((26,26), Image.ANTIALIAS)
         search_icon = ImageTk.PhotoImage(search_icon)
-        #Print Appointments tab
-        print_apt_icon = Image.open("pics/printing.png")
-        print_apt_icon = print_apt_icon.resize((26,26), Image.ANTIALIAS)
-        print_apt_icon = ImageTk.PhotoImage(print_apt_icon)
         
         # ICONS FOR THINGS IN APPOINTMENTS TAB #
         ########################################
@@ -122,7 +118,6 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.notebook.add(self.appointments_tab, text="Appointments", image=appointments_icon, compound='left')
         self.notebook.add(self.customers_tab, text="Customers", image=customers_icon, compound='left')
         self.notebook.add(self.search_tab, text="Search", image=search_icon, compound='left')   
-        self.notebook.add(self.print_apt, text="Print appointments", image=print_apt_icon, compound='left')
 
 
         # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN APPOINTMENTS TAB #
