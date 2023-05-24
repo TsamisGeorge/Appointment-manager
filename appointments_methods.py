@@ -2,7 +2,11 @@
 #################################################################
 
 
-from apt_imports import *
+import tkinter as tk
+from tkinter import ttk
+import tkinter.messagebox as messagebox
+from db_tools import open_connection,close_connection,fetch_all_dict_list,execute_query
+from datetime import datetime, timedelta
 
 class Appointment_methods():
     '''Parent Κλαση της κλασης Appointment_manager που δινει τις

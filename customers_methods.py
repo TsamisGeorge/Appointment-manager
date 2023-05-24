@@ -2,7 +2,11 @@
 #################################################################
 
 
-from appointments_methods import *
+import tkinter as tk
+import tkinter.messagebox as messagebox
+from db_tools import open_connection,close_connection,fetch_all_dict_list,execute_query
+from datetime import datetime
+from email_validator import validate_email
 
 class Customers_methods():
     '''Parent Κλαση της κλασης Appointment_manager που δινει τις
