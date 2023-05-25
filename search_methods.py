@@ -3,7 +3,7 @@
 import xlsxwriter
 import tkinter as tk
 import sqlite3
-from tkcalendar import Calendar
+import calendar
 from datetime import date
 from db_tools import open_connection, close_connection
 
@@ -14,7 +14,7 @@ class Search_methods():
     #function για υπολογισμο του πληθους ημερών ανά μήνα στο search tab
     def update_days(self,current_year,month_combo,day_combo):
         self.selected_month=int(month_combo.get())
-        self.num_days=Calendar.monthrange(current_year,self.selected_month)[1]
+        self.num_days=calendar.monthrange(current_year,self.selected_month)[1]
         self.day_cb=day_combo['values']=list(range(1,self.num_days+1))
 
 
