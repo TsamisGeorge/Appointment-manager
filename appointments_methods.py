@@ -1,5 +1,6 @@
-###  METHODS TO WORK WITH THE WIDGETS ON THE APPOINTMENT TAB  ###
-#################################################################
+# ------------------------------------------------------- #
+# METHODS TO WORK WITH THE WIDGETS ON THE APPOINTMENT TAB #
+# ------------------------------------------------------- #
 
 
 import tkinter as tk
@@ -9,12 +10,16 @@ from db_tools import open_connection,close_connection,fetch_all_dict_list,execut
 from datetime import datetime, timedelta
 
 class Appointment_methods():
-    '''Parent Κλαση της κλασης Appointment_manager που δινει τις
-    μεθοδους διαχειρισης ενος ραντεβου'''
+    '''Η κλάση αυτή δίνει τις μεθόδους διαχείρισης ενός ραντεβού, κλειρονομείται απο την κλάση Appointment_manager()'''
 
     def check_if_apt_valid(self, apt_date, apt_duration):
-        '''Μεθοδος ελεγχου αν ενα ραντεβου ειναι valid, δηλαδη αν δεν υπαρχει αλληλοεπικαλυψη μεταξυ του
-           επιλεγμενου ραντεβου και των ραντεβου στη βαση, παιρνει σαν ορισμα την αρχη και την διαρκεια του ραντεβου'''
+        '''Μέθοδος για έλεγχο αν υπάρχει ήδη ένα ραντεβου στην βαση
+        
+        Ορίσματα:
+
+        apt_date: (datetime.datetime) Αντιστοιχεί στο appointment_date της ΒΔ, είναι η αρχή ενός ραντεβού
+        
+        apt_duration: (datetime.datetime) Αντιστοιχεί στο appointment_interval της ΒΔ, είναι η διάρκεια ενός ραντεβού'''
         
         # δημιουργει ενα ερωτημα το οποιο φαιρνει ολα τα δεδομενα απο το table appointments
         # με χρηση τετραπλου WHERE clause αν οποιοδηποτε απο τα στοιχεια ειτε του επιλεγμενου ραντεβου ειτε
@@ -32,7 +37,11 @@ class Appointment_methods():
 
     def update_time_picker(self, event=None):
         '''Μεθοδος ανανεωσης του time_picker, αναλογα με το ποια ημερα ειναι
-        επιλεγμενη στο Calendar, η κληση του μπορει να γινει και ως event'''
+        επιλεγμενη στο Calendar
+        
+        Ορίσματα: 
+        
+        event=None: Δηλώνει πως μπορεί να χρησιμοποιηθεί και ως binded event, με προκαθορισμένη τιμή None αν δεν μπει σαν όρισμα κατά την κλήση της'''
 
 
         # οταν επιλεγεται μια ημερομηνια απο το Calendar καλειται
@@ -132,8 +141,11 @@ class Appointment_methods():
 
 
     def update_apt_manage_buttons(self, event=None):
-        '''Μεθοδος για ενημερωση των κουμπιων που διαχειριζονται τα reschedule
-         delete κουμπια στο appointments_tab, μπορει να χρησιμοποιειθει και ως event'''
+        '''Μεθοδος για ενημερωση των κουμπιων που διαχειριζονται τα reschedule delete κουμπια στο appointments_tab
+        
+        Ορίσματα:
+        
+        event=None: Δηλώνει πως μπορεί να χρησιμοποιηθεί και ως binded event, με προκαθορισμένη τιμή None αν δεν μπει σαν όρισμα κατά την κλήση της'''
 
         # γινεται ανακτηση του επιλεγμενου ραντεβου με χρηση του
         # self.selected_customer_appointments_listbox.curselection()
@@ -158,7 +170,11 @@ class Appointment_methods():
 
 
     def search_customer_apt_tab(self, event=None):
-        '''Μεθοδος για αναζητηση ενος πελατη στο appointments_tab, μπορει να χρησιμοποιηθει και σαν event'''
+        '''Μεθοδος για αναζητηση ενος πελατη στο appointments_tab
+        
+        Ορίσματα
+
+        event=None: Δηλώνει πως μπορεί να χρησιμοποιηθεί και ως binded event, με προκαθορισμένη τιμή None αν δεν μπει σαν όρισμα κατά την κλήση της'''
         # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry η οταν παταει
         # το κουμπι self.search_customer_button στο appointments_tab
 

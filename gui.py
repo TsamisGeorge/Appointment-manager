@@ -1,6 +1,6 @@
-###  MAIN CLASS OF THE PROGRAM AND GUI MANAGER  ###
-###################################################
-
+# ----------------------------------------- #
+# MAIN CLASS OF THE PROGRAM AND GUI MANAGER #
+# ----------------------------------------- #
 
 import tkinter as tk
 from tkinter import ttk
@@ -15,12 +15,11 @@ from smtp import SMTP_Methods
 
 
 class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,SMTP_Methods):
-    '''Η κλαση Appointment_manager κλειρονομει μεθοδους διαχειρισης ενος 
-        ραντεβου η ενος πελατη απο τις κλασεις Appointments_methods και
-        Customers_methods'''
+    '''Η κλάση Appointment_manager κλειρονομεί μεθόδους απο τις κλασεις Appointments_methods, Customers methods, Search_methods, SMTP_Methods'''
     def __init__(self):
-        #     MAIN WINDOW    #
-        ######################
+        # ----------- #
+        # MAIN WINDOW #
+        # ----------- #
 
         # Δημιουργια του βασικου window με τίτλο Appointment Manager
         # Και εικονα την εικονα appointment_manager.png στον φακελο
@@ -48,8 +47,11 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.main_window.maxsize(window_width, window_height)
 
 
+
+        # --------------------------------------- #
         # TAB HANDLER ATTACHED TO THE MAIN WINDOW #
-        ###########################################
+        # --------------------------------------- #
+
         # Notebook αντικειμενο απο την ttk το οποιο θα κρατήσει
         # ολα τα tabs τα οποια θα ειναι frames, θα λειτουργει
         # σαν tab handler, και καποιες αλλαγες στο στυλ μεγεθος κλπ
@@ -59,16 +61,19 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.style.configure("TNotebook.Tab", font=("Segoe UI", 12, "bold"), foreground="blue", width=16, height=10)
         self.notebook.place(x=0, y=0, relwidth=1, relheight=1)
 
-        #     FRAMES FOR THE TAB HANDLER    #
-        #####################################
+        # -------------------------- #
+        # FRAMES FOR THE TAB HANDLER #
+        # -------------------------- #
+        
         # δημιουργία των frames που θα μπουν πανω στον tab handler
         self.appointments_tab = tk.Frame(self.notebook)
         self.customers_tab = tk.Frame(self.notebook)
         self.search_tab = tk.Frame(self.notebook)
         self.print_apt = tk.Frame(self.notebook)
-        #   ICONS FOR TABS   #
-        ######################
 
+        # -------------- #
+        # ICONS FOR TABS #
+        # -------------- #
         # εικόνες μονο για τα tabs, με χρήση της Image.open της PIL φτιανουμε αντικειμενα
         # εικόνας, οπως το appointments_icon, και με την resize της PIL κανουμε μικρότερη
         # την εικόνα με τυπο κλιμάκωσης διγραμμική παρεμβολή το οποίο δίνεται σαν όρισμα 
@@ -87,10 +92,12 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         search_icon = search_icon.resize((26,26), Image.ANTIALIAS)
         search_icon = ImageTk.PhotoImage(search_icon)
         
-        # ICONS FOR THINGS IN APPOINTMENTS TAB #
-        ########################################
 
+        # ------------------------------------ #
+        # ICONS FOR THINGS IN APPOINTMENTS TAB #
+        # ------------------------------------ #
         # εικονες για τα αντικείμενα γραφικου περιβαλλοντος του frame appointments_tab 
+        
         #searching customer img
         searching_customer_img = Image.open("pics/searching.png")
         searching_customer_img = searching_customer_img.resize((24,24), Image.ANTIALIAS)
@@ -98,8 +105,10 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
 
 
 
+
+        # --------------------------------- #
         # ICONS FOR THINGS IN CUSTOMERS TAB #
-        #####################################
+        # --------------------------------- #
 
         # εικονες για τα αντικείμενα γραφικου περιβαλλοντος του frame customers_tab 
         self.check_icon = Image.open("pics/check.png")
@@ -110,8 +119,10 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.delete_customer_icon = self.delete_customer_icon.resize((26,26), Image.ANTIALIAS)
         self.delete_customer_icon = ImageTk.PhotoImage(self.delete_customer_icon)
 
+
+        # ---------------------------------- #
         # ADDING THE TABS TO THE TAB MANAGER #
-        ######################################
+        # ---------------------------------- #
 
         # χρήση της .add για να προσθέσουμε τα frame στον tab handler, με ορισμα compund = 'left'
         # και image = το εκαστοτε Icon ωστε να μπουν αριστερα απο το text τα icons
@@ -120,8 +131,9 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.notebook.add(self.search_tab, text="Search", image=search_icon, compound='left')   
 
 
+        # ------------------------------------------------------------------------------ #
         # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN APPOINTMENTS TAB #
-        ##################################################################################
+        # ------------------------------------------------------------------------------ #
 
         # δημιουργια stringvar και μεταβλητων που θα ειναι binded σε καποιο αντικείμενο γραφικου
         # περιβαλλοντος στο appointments_tab ωστε να μπορουν να αλλαζουν δυναμικα αυτα που φαινονται
@@ -133,8 +145,9 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.selected_customer_phone_number_apt_tab = 0
 
 
+        # --------------------------------------------------------------------------- #
         # STRINGVARS AND ALL GLOBAL VARIABLES NEEDED FOR THE WIDGETS IN CUSTOMERS TAB #
-        ##################################################################################
+        # --------------------------------------------------------------------------- #
         
         # παρομοια λειτουργια και τα strinvar και μεταβλητες που χρειαζομαστε για το 
         # customers_tab
@@ -142,10 +155,9 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.selected_customer_customers_tab.set("None")
         self.selected_customer_phone_number_customers_tab = 0
 
-
-
+        # -------------------------- #
         # DECORATIONS OF MAIN WINDOW #
-        ##############################
+        # -------------------------- #
 
         # απλα frame για διακόσμηση του main window
         self.bottom_decoration = tk.Frame(self.main_window,background="#7d8080",width=1000,height=60,relief="ridge")
@@ -153,11 +165,15 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
 
 
 
-###  APPOINTMENT TAB WIDGETS  ###
-#################################
 
+# ----------------------- #
+# APPOINTMENT TAB WIDGETS #
+# ----------------------- #
+
+
+        # ----------- #
         # DECORATIONS #
-        ###############
+        # ----------- #
 
         # διακόσμηση του appointments_tab 
         self.top_decoration = tk.Frame(self.appointments_tab,background="#C0C6C6",width=1000,height=54,relief="ridge")
@@ -272,11 +288,13 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.delete_apt_button = tk.Button(self.appointments_tab,text="Delete", font=("Segoe UI", 11), bg='Steel Blue', relief = "sunken", state="disabled", command=self.delete_apt_command, width=10)
         self.delete_apt_button.place(x=788, y=300)
 
-###  CUSTOMERS TAB WIDGETS  ###
-###############################
+# --------------------- #
+# CUSTOMERS TAB WIDGETS #
+# --------------------- #
 
+        # ----------- #
         # DECORATIONS #
-        ###############
+        # ----------- #
 
         # Διακοσμησεις του customers_tab        
         self.top_decoration = tk.Frame(self.customers_tab,background="#C0C6C6",width=1000,height=54,relief="ridge")
@@ -368,123 +386,111 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.change_phone_number_button = tk.Button(self.customers_tab, text="Change Phone Number", bg='Steel Blue', font=("Segoe UI", 11), relief="sunken",state="disabled",command=self.change_customer_phone_number,name="change phone number")
         self.change_phone_number_button.place(x=702, y=282)
 
-
-###  SEARCH TAB WIDGETS  ###
-###############################
+# ------------------ #
+# SEARCH TAB WIDGETS #
+# ------------------ #
 
         #Calendar label
         self.date_label=tk.Label(self.search_tab,text="Peak a date",font=("Segoe UI", 12))
         self.date_label.place(x=5,y=5)
 
-        #########Προσθήκη 1ου Combobox YEAR#######################################
-        #LABEL
+        # Year label and combobox
         self.year_label=tk.Label(self.search_tab,text="YEAR",font=("Segoe UI", 9))
         self.year_label.place(x=5,y=30)
 
-        #create combobox
         selected_year=tk.StringVar()
         year_cb=ttk.Combobox(self.search_tab,textvariable=selected_year)
 
-        ##combobox values
+        # Values for year combobox
         current_year=datetime.now().year
         year_cb['values']=list(range(current_year,current_year+200))
 
-        #prevent typing a value
+        # Make year combobox state readonly so user can't type inside the combobox
         year_cb['state']='readonly'
 
         year_cb.place(x=5,y=50,width=80)
 
-        ########Προσθήκη 2ου Combobox Month#######################################
+        # Month label and combobox
         self.month_label=tk.Label(self.search_tab,text='MONTH',font=("Segoe UI", 9))
         self.month_label.place(x=90,y=30)
 
-        #create combobox
         selected_month=tk.StringVar()
         month_cb=ttk.Combobox(self.search_tab,textvariable=selected_month)
 
-        #combobox values
+        #Values for month combobox
         month_cb['values']=list(range(1,12+1))
 
-        #prevent typing a value
+        # Make month combobox state readonly so user can't type inside the combobox
         month_cb['state']='readonly'
 
         month_cb.place(x=90,y=50,width=60)
 
-
-        #####Προσθήκη 3ου Combobox DAY#######################################
+        # Day label and combobox
         self.day_label=tk.Label(self.search_tab,text="DAY",font=("Segoe UI", 9))
         self.day_label.place(x=160,y=30)
 
-        #create combobox
         selected_day=tk.StringVar()
         day_cb=ttk.Combobox(self.search_tab,textvariable=selected_day)
 
-        #combobox values
+        #Values for day combobox
 
         month_cb.bind('<<ComboboxSelected>>',lambda event:self.update_days(current_year,month_cb,day_cb))
 
-        #prevent typing a value
+        # Make day combobox state readonly so user can't type inside the combobox
         day_cb['state']='readonly'
 
         day_cb.place(x=160,y=50,width=60)
 
-        #######Προσθήκη πληκτρου ΟΚ##########################
-        
+        # Button to confirm the specified date search        
         confirm_button=tk.Button(self.search_tab,text="OK",command=lambda:self.confirmation_button(year_cb.get(),month_cb.get(),day_cb.get()))
         confirm_button.place(x=5,y=80)
 
-
-
-################προσθήκη Treeview#############################################
-
-
-        #προσθήκη Treeview
-
-
+        # Adding the treeview that will hold the apppointments of the specified date
         columns = ("first_name","last_name","email","time")
         self.tree = ttk.Treeview(self.search_tab,columns=columns,show="headings")
 
-        #definition of headings
+        # Defining the heading titles
         self.tree.heading("first_name",text="First Name")
         self.tree.heading("last_name",text="Last Name")
         self.tree.heading("email",text="Email")
         self.tree.heading("time",text="Time")
 
-        #definition of column width
+        # Defining the column width
         self.tree.column('first_name',width=150)
         self.tree.column('last_name',width=150)
         self.tree.column('email',width=150)
         self.tree.column('time',width=150)
 
 
-        #scrolbar
+        # Scrollbar for the treeview
         scrollbar = ttk.Scrollbar(self.search_tab, orient='vertical', command=self.tree.yview)
         scrollbar.place(x=980,y=25,height=220)
         self.tree.configure(yscrollcommand=scrollbar.set)
         
-
-
+        # Placing the tree
         self.tree.place(x=380,y=25)
 
-###################################################################################################################################
-#################SEND NOTIFICATION by EMAIL########################################################################################
-###################################################################################################################################
 
+        # ----------- #
+        # Email tools #
+        # ----------- #
 
-        #prosthiki button send notification
+        # Button to send notification to the customers that have appointments on the specified date
         self.notification_button=tk.Button(self.search_tab,text="Send Email",command=self.send_notification)
         self.notification_button.place(x=380,y=250)
 
-###################################################################################################################################
-#################                      PRINT APPOINTMENTS BY DATE        ##########################################################
-###################################################################################################################################
 
-        #prosthiki button print appointmnts
+        # -------------- #
+        # Printing tools #
+        # -------------- #
+
+        # Button to print appointments from the customers that have appointments on the specified date
         self.print_button=tk.Button(self.search_tab,text='Print Appointments',command=self.print_appointment)
         self.print_button.place(x=840,y=250)
 
 
+        # -------- #
+        # MAINLOOP #
+        # -------- #
 
-        # TK MAINLOOP #
-        ##############
         self.main_window.mainloop()

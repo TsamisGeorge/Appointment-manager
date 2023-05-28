@@ -1,13 +1,14 @@
-###  TOOLS FOR THE CONNECTION WITH THE DATABASE  ###
-####################################################
+# ------------------------------------------ #
+# TOOLS FOR THE CONNECTION WITH THE DATABASE #
+# ------------------------------------------ #
 
 
+# sqlite import that has all the tools in order to connect to the .db database file
 import sqlite3
 
 
 def open_connection():
-    '''Μεθοδος που επιστρεφει ενα αντικειμενο τυπου connection
-    που αντιπροσωπευει την συνδεση με την βαση δεδομενων που εχει δηλωθει'''
+    '''Μέθοδος που επιστρέφει ενα αντικειμενο τυπου connection που είναι η σύνδεσ με την ΒΔ'''
     try:
         conn = sqlite3.connect("db_2.db")
         return conn
@@ -16,8 +17,11 @@ def open_connection():
 
 
 def close_connection(connector):
-    '''Μεθοδος που κλεινει την συνδεση με την βαση δεδομενων,
-    παιρνει σαν παραμετρο αντικειμενο τυπου sqlite3.connect()'''
+    '''Μεθοδος που κλεινει την συνδεση με την βαση δεδομενων
+    
+    Ορίσματα:
+    
+    connector: Ένα αντικείμενο τυπου connection που εχει ήδη ανοιχθει'''
     try:
         connector.close()      
     except sqlite3.Error as e:
@@ -26,8 +30,13 @@ def close_connection(connector):
 
 
 def fetch_all_dict_list(connector, query):
-    '''Μεθοδος που επιστρεφει λιστα με λεξικα, απο την βαση δεδομενων που
-    δινεται σαν ορισμα, εκτελωντας το query που δινεται σαν ορισμα'''
+    '''Μέθοδος που επιστρέφει λίστα με λεξικά απο entries της ΒΔ
+    
+    Ορίσματα:
+    
+    connector: Αντικείμενο τυπου connection που έχει ήδη ανοιχθεί σε μία ΒΔ
+    
+    query: (str) Το query που θα εκτελεστεί στο σώμα της συνάρτησης'''
     try:
         cursor = connector.cursor()
         cursor.execute(query)
@@ -47,7 +56,13 @@ def fetch_all_dict_list(connector, query):
 
 
 def execute_query(connector, query):
-    '''Συναρτηση που εκτελει το query που δινεται σαν ορισμα'''
+    '''Συναρτηση που εκτελει το query που δινεται σαν ορισμα
+    
+    Ορίσματα:
+    
+    connector: Αντικείμενο τυπου connection που έχει ήδη ανοιχθεί σε μία ΒΔ
+    
+    query :(str) Το query που θα εκτελεστεί στο σώμα της συνάρτησης'''
     try:
         cursor = connector.cursor()
         cursor.execute(query)

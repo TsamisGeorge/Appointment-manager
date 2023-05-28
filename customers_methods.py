@@ -1,6 +1,6 @@
-###   METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB   ###
-#################################################################
-
+# ----------------------------------------------------- #
+# METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB #
+# ----------------------------------------------------- #
 
 import tkinter as tk
 import tkinter.messagebox as messagebox
@@ -9,8 +9,7 @@ from datetime import datetime
 from email_validator import validate_email
 
 class Customers_methods():
-    '''Parent Κλαση της κλασης Appointment_manager που δινει τις
-       μεθοδους διαχειρισης ενος πελατη'''
+    '''Η κλάση αυτή δίνει τις μεθόδους διαχείρισης ενός πελάτη, κλειρονομείται απο την κλάση Appointment_manager()'''
     
     def create_customer(self):
         '''Μεθοδος δημιουργιας ενος πελατη'''
@@ -84,7 +83,11 @@ class Customers_methods():
 
 
     def search_customer_customers_tab(self, event=None):
-        '''Μεθοδος για αναζητηση ενος πελατη στο customers_tab, μπορει να χρησιμοποιηθει και σαν event'''
+        '''Μεθοδος για αναζητηση ενος πελατη στο customers_tab
+        
+        Ορίσματα:
+        
+        event=None: Δηλώνει πως μπορεί να χρησιμοποιηθεί και ως binded event, με προκαθορισμένη τιμή None αν δεν μπει σαν όρισμα κατά την κλήση της'''
 
         # καλειται οταν ο χρηστης παταει enter εχοντας επιλεγμενο το self.search_customer_entry2 η οταν παταει
         # το κουμπι self.search_customer_button2 στο customers_tab
@@ -130,8 +133,7 @@ class Customers_methods():
 
 
     def update_customer_buttons(self):
-        '''Μεθοδος ενημερωσης των κουμπιων που αλλαζουν τα στοιχεια
-           ενος πελατη στο customers_tab'''
+        '''Μεθοδος ενημερωσης των κουμπιων που αλλαζουν τα στοιχεια ενος πελατη στο customers_tab'''
         
         # κανοντας τον ελεγχο αν το self.selected_customer_phone_number_customers_tab 
         # ειναι ισο με 0 ή οχι, φαινεται αν εχει επιλεχθει ενας πελατης ή οχι
@@ -203,8 +205,11 @@ class Customers_methods():
 
 
     def make_toplevel_window(self, button_name):
-        '''Μεθοδος που φτιαχνει ενα toplevel window πανω απο το main window, 
-        για την διαχειριση της αλλαγης ενος στοιχειου του επιλεγμενου πελατη στο customers_tab'''
+        '''Μεθοδος που φτιαχνει ενα toplevel window πανω απο το main window για την διαχειριση της αλλαγης ενος στοιχειου του επιλεγμενου πελατη στο customers_tab
+        
+        Ορίσματα:
+        
+        button_name: (str) Το όνομα που έχει το κουμπί που πατήθηκε'''
         # αφου πατηθει ενα απο τα 4 κουμπια
         # διαχειρισης των credential ενος πελατη
         # παιρνει ως ορισμα το ονομα του κουμπιου που πατηθηκε για το χρισημοποιησει για αλλα αντικειμενα
@@ -267,9 +272,13 @@ class Customers_methods():
 
 
     def commit_changes(self, button_name, event=None):
-        '''Μεθοδος για δευσμευση της αλλαγης ενος στοιχειου του επιλεγμενου πελατη, 
-        μπορει να χρησιμοποιηθει και σαν event και παιρνει σαν ορισμα το ονομα του κουμπιου
-        που πατηθηκε'''
+        '''Μεθοδος για δευσμευση της αλλαγης ενος στοιχειου του επιλεγμενου πελατη
+        
+        Ορίσματα:
+        
+        button_name: (str) Το όνομα που έχει το κουμπί που πατήθηκε
+        
+        event=None: Δηλώνει πως μπορεί να χρησιμοποιηθεί και ως binded event, με προκαθορισμένη τιμή None αν δεν μπει σαν όρισμα κατά την κλήση της'''
 
         
         # δημιουργια ενος ερωτηματος που αλλαζει αναλογα το ονομα του κουμπιου
