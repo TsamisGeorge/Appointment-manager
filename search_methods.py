@@ -6,6 +6,8 @@ import sqlite3
 import calendar
 from datetime import date
 from db_tools import open_connection, close_connection
+from tkinter import filedialog
+from tkinter.messagebox import showinfo,showerror
 
 
 
@@ -59,48 +61,57 @@ class Search_methods():
     #function του πλήκτρου OK στην επιλογή ημερομηνίας στο Search Tab
     def confirmation_button(self,year_combo,month_combo,day_combo):
         self.delete_info()
-        self.selected_date=date(int(year_combo),int(month_combo),int(day_combo))     
-        self.add_info(self.appointment_date(self.selected_date))
+        if year_combo=='' or month_combo=='' or day_combo=='':
+            show_error=showerror(message="Invalid date. Please select a valid date (Year,Month,Date)")
+        else:
+            self.selected_date=date(int(year_combo),int(month_combo),int(day_combo))     
+            self.add_info(self.appointment_date(self.selected_date))
 
     #function του πλήκτρου Print Appointments
     def print_appointment(self):
         data=self.extraction_data()
-        self.workbook=xlsxwriter.Workbook(f'Appointment of {data[0][4]}.xlsx')
-        self.worksheet=self.workbook.add_worksheet()
-
-        #bold format
-        bold=self.workbook.add_format({'bold':True})
-
-        #onomasia ton headers
+        file_path=filedialog.asksaveasfilename(defaultextension='.xlsx',initialfile=f'Appointment of {data[0][4]}')
         
-        self.worksheet.write('A1','#',bold)
-        self.worksheet.write('B1','First Name',bold)
-        self.worksheet.write('C1','Last Name',bold)
-        self.worksheet.write('D1','EMAIL',bold)
-        self.worksheet.write('E1','Appointment Time',bold)
-             
-        
-        
+        if file_path:
+            self.workbook=xlsxwriter.Workbook(file_path)
+            self.worksheet=self.workbook.add_worksheet()
 
-        #adust the width
-        self.worksheet.set_column('A:A',5)
-        self.worksheet.set_column('B:B',15)
-        self.worksheet.set_column('C:C',15)
-        self.worksheet.set_column('D:D',23)
-        self.worksheet.set_column('E:E',20)
+            #bold format
+            bold=self.workbook.add_format({'bold':True})
 
-        
+            #onomasia ton headers
+            
+            self.worksheet.write('A1','#',bold)
+            self.worksheet.write('B1','First Name',bold)
+            self.worksheet.write('C1','Last Name',bold)
+            self.worksheet.write('D1','EMAIL',bold)
+            self.worksheet.write('E1','Appointment Time',bold)
+                
+            
+            
+
+            #adust the width
+            self.worksheet.set_column('A:A',5)
+            self.worksheet.set_column('B:B',15)
+            self.worksheet.set_column('C:C',15)
+            self.worksheet.set_column('D:D',23)
+            self.worksheet.set_column('E:E',20)
+
+            
 
 
-        row=1
-        col=0
-        #insert data
-        for i in range(len(data)):
-            self.worksheet.write(row,col,f'{i+1}')
-            self.worksheet.write(row,col+1,f'{data[i][0]}')
-            self.worksheet.write(row,col+2,f'{data[i][1]}')
-            self.worksheet.write(row,col+3,f'{data[i][2]}')
-            self.worksheet.write(row,col+4,f'{data[i][3]}')
-            row+=1
+            row=1
+            col=0
+            #insert data
+            for i in range(len(data)):
+                self.worksheet.write(row,col,f'{i+1}')
+                self.worksheet.write(row,col+1,f'{data[i][0]}')
+                self.worksheet.write(row,col+2,f'{data[i][1]}')
+                self.worksheet.write(row,col+3,f'{data[i][2]}')
+                self.worksheet.write(row,col+4,f'{data[i][3]}')
+                row+=1
 
-        self.workbook.close()  
+            show_info=showinfo(message=f'The file "Appointment of {data[0][4]}" was saved.')
+
+
+            self.workbook.close()  
