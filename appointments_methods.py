@@ -12,6 +12,14 @@ from datetime import datetime, timedelta
 class Appointment_methods():
     '''Η κλάση αυτή δίνει τις μεθόδους διαχείρισης ενός ραντεβού, κλειρονομείται απο την κλάση Appointment_manager()'''
 
+    def bring_curr_cust_apt_tab(self):
+        '''Μέθοδος που φέρνει τα στοιχεία του επιλεγμένου πελάτη'''
+        self.connection = open_connection()
+        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
+        curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
+        close_connection(self.connection)
+        return curr_customer_results
+
     def check_if_apt_valid(self, apt_date, apt_duration):
         '''Μέθοδος για έλεγχο αν υπάρχει ήδη ένα ραντεβου στην βαση
         
@@ -103,20 +111,16 @@ class Appointment_methods():
         # κληση της datetime.now() για ανακτηση της τωρινης ημερομηνιας και
         # χρηση του .strftime με ορισμα το format "%Y-%m-%d %H:%M:%S"
         # για την δημιουργια ενος datetime αντικειμενου
-        current_datetime = datetime.now()
-        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        
-        # ανοιγμα του connection, δημιουργια του ερωτηματος για τον επιλεγμενο πελατη και 
+        # Κληση της self.curr_customer()
         # επιστροφη του αποτελεσματος στο curr_customer_results
+        curr_customer_results = self.bring_curr_cust_apt_tab()
         self.connection = open_connection()
-        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
-        curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
-
         # δημιουργια ερωτηματς που επιστρεφει ολα τα επικειμενα ραντεβου του επιλεγμενου πελατη
         # με χρηση διπλου WHERE clause με το id του πελατη και το formatted_datetime που ειναι
         # η τωρινη ημερομηνια ωστε να φερει μονο τα επικειμενα ραντεβου του
-        curr_customer_appointments_query = f"SELECT * FROM appointments WHERE client_id = {curr_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
+        curr_customer_appointments_query = f"SELECT * FROM appointments WHERE client_id = {curr_customer_results[0]['client_id']} AND appointment_interval > '{current_datetime}'"
         curr_customer_appointments_results = fetch_all_dict_list(self.connection, curr_customer_appointments_query)
 
         if curr_customer_appointments_results: # αν υπαρχουν επικειμενα ραντεβου
@@ -134,7 +138,7 @@ class Appointment_methods():
         
         else: # αν δεν υπαρχουν ραντεβου απλα διαγραφη των ραντεβου του προηγουμενου επιλεγμενου πελατη
             self.selected_customer_appointments_listbox.delete(0, tk.END)
-        
+
         # σε καθε περιπτωση ενημερωση των κουμπιων στο appointments_tab και κλεισιμο του connection
         self.update_apt_manage_buttons()
         close_connection(self.connection)
@@ -160,7 +164,7 @@ class Appointment_methods():
             self.delete_apt_button.configure(relief = "sunken", state="disabled")
 
 
-    def update_picked_customer_to_none(self):
+    def update_selected_customer_apt_tab(self):
         '''Μεθοδος ενημερωσης των widget ενος επιλεγμενου πελατη στο appointments_tab'''
         self.selected_customer_apt_tab.set(f"None")
         self.selected_customer_phone_number_apt_tab = 0
@@ -189,7 +193,7 @@ class Appointment_methods():
         # μυνηματος invalid input μεσω messagebox και κλεισιμο του connection
         if prompt.isalpha() or "\\" in prompt or  (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.update_picked_customer_to_none()
+            self.update_selected_customer_apt_tab()
             close_connection(self.connection)
         
         else: # αν το input ειναι valid
@@ -204,7 +208,7 @@ class Appointment_methods():
                 # για να μην υπαρχει επιλεγμενος πελατης, αλλαγη της καταστασης του κουμπιου δημιουργιας ενος ραντεβου 
                 # σε disabled και διαγραφη των ραντεβου του πρωην επιλεγμενου πελατη απο το listbox των ραντεβου
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.update_picked_customer_to_none()
+                self.update_selected_customer_apt_tab()
 
             else: # αν ερθουν αποτελεσματα και υπαρχει πελατης
 
@@ -246,9 +250,7 @@ class Appointment_methods():
 
             # ανακτηση τιμης απο το time_picker και προσθεση του ':00' ωστε να ειναι ιδιο με αντικειμενο
             # time, δημιουργια του format και χρηση της .strptime για την δημιουργια του time αντικειμενου
-            selected_time = self.time_picker.get() + ':00'
-            time_format = '%H:%M:%S'
-            selected_time = datetime.strptime(selected_time, time_format).time()
+            selected_time = datetime.strptime(self.time_picker.get() + ':00', '%H:%M:%S').time()
 
             # χρηση της .combine με ορισμα τα date και time αντικειμενα ωστε να
             # εχουμε το datetime αντικειμενο το οποιο ειναι η ημερομηνια του ραντεβου
@@ -263,15 +265,18 @@ class Appointment_methods():
             # κληση της self.check_if_apt_valid με ορισμα τα 2 αντικειμενα για να δουμε
             # αν η ωρες του ραντεβου ειναι valid και ανοιγμα του connection
             appointmnents_results = self.check_if_apt_valid(apt_date, apt_duration)
+            
             self.connection = open_connection()
 
             if not appointmnents_results: # αν δεν εχουν επιστραφει ραντεβου δηλαδη το επιλεγμενο ραντεβου ειναι valid
                 
                 # δημιουργια query για τα στοιχεια του επιλεγμενου πελατη με χρηση του self.selected_customer_phone_number_apt_tab
                 # και εκτελεση του ερωτηματος και επιστροφη του αποτελεσματος στο current_customer_results
-                current_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_apt_tab}'"
-                current_customer_results = fetch_all_dict_list(self.connection, current_customer_query)
+                current_customer_results = self.bring_curr_cust_apt_tab()
                 
+                # ανοιγμα του connection
+                self.connection = open_connection()
+
                 # δημιουργια query για επιστροφη του τελευταιου appointment_id και εκτελεση του
                 last_appointment_query = f"SELECT appointment_id FROM appointments ORDER BY appointment_id desc LIMIT 1"
                 last_appointment_id = fetch_all_dict_list(self.connection, last_appointment_query)
@@ -325,11 +330,9 @@ class Appointment_methods():
         else: # Μολις και αν επιλεχθουν επιτυχως τιμες
 
             # μετατροπη ολων των τιμων σε datetime αντικειμενα
-            selected_time = self.time_picker.get() + ':00'
-            time_format = '%H:%M:%S'
-            selected_time = datetime.strptime(selected_time, time_format).time()
-            apt_min = timedelta(minutes=int(self.time_picker2.get()))
+            selected_time = datetime.strptime(self.time_picker.get() + ':00', '%H:%M:%S').time()
             apt_date = datetime.combine(selected_date, selected_time)
+            apt_min = timedelta(minutes=int(self.time_picker2.get()))
             apt_duration = apt_date + apt_min
 
             # ελεγχος αν ειναι valid το αντικειμενο
@@ -362,6 +365,7 @@ class Appointment_methods():
                     # εμφανιση messagebox που αναφερει πως το ραντεβου δημιουργηθηκε επιτυχως και εχει λεπτομεριες του ραντεβου
                     total_seconds = apt_min.total_seconds()
                     messagebox.showinfo(title="Appointment Rescheduled", message=f"Appointment successfully rescheduled at {apt_date} for {int(total_seconds//60)} minutes")
+
             else: # αν το ραντεβου δεν ειναι valid(υπαρχουν ραντεβου στο appointmnents_results)
                 appointment_time = datetime.strptime(appointmnents_results[0]['appointment_interval'], "%Y-%m-%d %H:%M:%S")
                 appointment_duration = datetime.strptime(appointmnents_results[0]['appointment_date'], "%Y-%m-%d %H:%M:%S")

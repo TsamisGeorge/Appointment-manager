@@ -10,7 +10,20 @@ from email_validator import validate_email
 
 class Customers_methods():
     '''Η κλάση αυτή δίνει τις μεθόδους διαχείρισης ενός πελάτη, κλειρονομείται απο την κλάση Appointment_manager()'''
-    
+
+    def bring_curr_cust_cust_tab(self):
+        '''Μέθοδος που φέρνει τα στοιχεία του επιλεγμένου πελάτη'''
+        self.connection = open_connection()
+        curr_customer_query = f"SELECT * FROM Clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
+        curr_customer_results = fetch_all_dict_list(self.connection, curr_customer_query)
+        close_connection(self.connection)
+        return curr_customer_results
+
+    def update_selected_customer_cust_tab(self):
+        '''Μεθοδος ενημερωσης των widget ενος επιλεγμενου πελατη στο customers_tab'''
+        self.selected_customer_customers_tab.set("None")
+        self.selected_customer_phone_number_customers_tab = 0
+
     def create_customer(self):
         '''Μεθοδος δημιουργιας ενος πελατη'''
 
@@ -44,14 +57,11 @@ class Customers_methods():
         # φερει τιποτα σημαινει πως δεν υπαρχει πελατης, οποτε συνεχιζει με την εκτελεση
         # αλλιως βγαζει μυνημα λαθους σε μορφη messagebox και κλεινει το connection
         if valid_info:
-            self.connection = open_connection()
-            fetch_query = f"SELECT * FROM clients WHERE phone_number = '{phone_number}' OR email = '{email}'"
-            fetch_results = fetch_all_dict_list(self.connection, fetch_query)
-            print(fetch_results)
+            fetch_results = self.bring_curr_cust_cust_tab()
             if fetch_results:
                 messagebox.showinfo(title="Customer exists",message=f"Customer {fetch_results[0]['first_name']} {fetch_results[0]['last_name']} already exists")
-                close_connection(self.connection)
             else:
+                self.connection = open_connection()
                 # Δημιουργια ερωτηματος που θα φερει το τελευταιο client_id απο την βαση δεδομενων
                 # αν υπαρχει επιστρεφομενο client_id στο last_entry_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
                 # τα στοιχεια που πηρε απο τα entries και προσθετει τον πελατη με client_id αυτο που πηρε αυξανομενο κατα 1
@@ -59,12 +69,10 @@ class Customers_methods():
                 last_customer_query = f"SELECT client_id FROM clients ORDER BY client_id desc LIMIT 1"
                 last_entry_id = fetch_all_dict_list(self.connection, last_customer_query)
                 if not last_entry_id:
-                    final_query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
+                    query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
                 else:
-                    inserting_query1 = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email)"
-                    inserting_query2 = f" VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
-                    final_query = inserting_query1 + inserting_query2
-                execute_query(self.connection, final_query)
+                    query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
+                execute_query(self.connection, query)
                 self.connection.commit()
                 messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
                 # Κληση της self.clear_customers_entry() αν δημιουργηθει επιτυχως ενας πελατης για να αδιασουν τα entry boxes
@@ -103,8 +111,7 @@ class Customers_methods():
         # πελατη και μετα κλεινει το connection
         if prompt.isalpha() or "\\" in prompt or (not prompt.isdigit() and ('@' not in prompt or '.' not in prompt)):
             messagebox.showwarning(title="Invalid Input", message=f"Invalid Input")
-            self.selected_customer_customers_tab.set("None")
-            self.selected_customer_phone_number_customers_tab = 0
+            self.update_selected_customer_cust_tab()
             close_connection(self.connection)
         else: 
             # αν το prompt ειναι valid, τοτε φτιαχνει query και ψαχνει τους πελατες οι οποιοι εχουν ιδιο 
@@ -112,13 +119,12 @@ class Customers_methods():
             # αν δεν φερει πελατες το search_customer_results μετα την εκτελεση του ερωτηματος τοτε
             # ανανεωνει τις τιμες των μεταβλητων του επιλεγμενου πελατη αναλογως για να δειξει πως
             # δεν επιλεχθηκε καποιος πελατης και βγαζει μυνημα οτι ο πελατης με το συγκεκριμενο αναγνωριστικο
-            # αναλογα και την μορφη του αναγνωριστικου δεν υπαρχει   
+            # αναλογα και την μορφη του αναγνωριστικου δεν υπαρχει
             search_customer_query = f"SELECT * FROM clients WHERE phone_number = '{prompt}' OR email = '{prompt}'"
             search_customer_results = fetch_all_dict_list(self.connection, search_customer_query)
             if not search_customer_results:
                 messagebox.showwarning(title="Customer not found", message=f"Customer with {'phone number' if prompt.isdigit() else 'email'} {prompt} doesn't exist.")
-                self.selected_customer_customers_tab.set("None")
-                self.selected_customer_phone_number_customers_tab = 0
+                self.update_selected_customer_cust_tab()
             else:
                 # αν ο πελατης υπαρχει κανονικα τοτε αλλαζει τις τιμες των μεταβλητων του επιλεγμενου πελατη ωστε
                 # να μπορει να φανει αλλα και να χρησιμοποιηθει η τιμη του self.selected_customer_phone_number_customers_tab
@@ -156,21 +162,19 @@ class Customers_methods():
 
         # κληση της datetime.now() και format σε μορφη DATETIMΕ αντικειμενου της SQL ωστε
         # να χρισημοποιηθει σε επομενο sql ερωτημα
-        current_datetime = datetime.now()
-        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # ανοιγμα της συνδεσης με την βαση, δημιουργια του ερωτηματος για τον επιλεγμενο πελατη
-        # με χρηση της μεταβλητης self.selected_customer_phone_number_customers_tab που θα εχει
-        # μη μηδενικη τιμη επειδη για να μπορει να πατηθει αυτο το κουμπι σημαινει πως εχει επιλεχθει
-        # επιτυχως ενας πελατης
-        self.connection = open_connection()
-        picked_customer_query = f"SELECT * FROM clients WHERE phone_number = '{self.selected_customer_phone_number_customers_tab}'"
-        picked_customer_results = fetch_all_dict_list(self.connection, picked_customer_query)
+        # Κλήση της self.bring_curr_cust_cust_tab() για να φερει δεδομενα για τον επιλεγμενο πελατη
+        picked_customer_results = self.bring_curr_cust_cust_tab()
+
         # δημιουργια ερωτηματος για την ανακτηση ολων των ραντεβου του επιλεγμενου πελατη, τα οποια ειναι μεταγενεστερα της datetime.now(),
         # της τωρινης δηλαδη ημερομηνιας, και αποθηκευση τους στο appointments_results 
         # ωστε να δουμε αν ο πελατης εχει ραντεβου τα οποια δεν εχουν ολοκληρωθει ακομα
-        appointments_query = f"SELECT * FROM appointments WHERE client_id = {picked_customer_results[0]['client_id']} AND appointment_interval > '{formatted_datetime}'"
+
+        self.connection = open_connection()
+        appointments_query = f"SELECT * FROM appointments WHERE client_id = {picked_customer_results[0]['client_id']} AND appointment_interval > '{current_datetime}'"
         appointments_results = fetch_all_dict_list(self.connection, appointments_query)
+
         if not appointments_results: # αν δεν υπαρχουν ραντεβου τα οποια δεν ειναι ολοκληρωμενα
             # δημιουργια messagebox για ερωτηση επιβεβαιωσης
             confirmation = messagebox.askyesno(title="Confirmation", message=f"Are you sure you want to delete customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} ?")
@@ -192,13 +196,15 @@ class Customers_methods():
                 # εμφανιση messagebox που δειχνει πως ο πελατης με το συγκεκριμενο ονομα και επιθετο διαγραφτηκε επιτυχως
                 messagebox.showinfo(title="Customer Deleted", message=f"Customer {picked_customer_results[0]['first_name']} {picked_customer_results[0]['last_name']} has been successfully deleted")
 
-                # ανανεωση των μεταβλητων του επιλεγμενου πελατη ωστε να μην υπαρχει επιλεγμενος πελατης μετα την διαγραφη
                 if self.selected_customer_phone_number_customers_tab == self.selected_customer_phone_number_apt_tab:
-                    self.update_picked_customer_to_none()
-                self.selected_customer_phone_number_customers_tab = 0
-                self.selected_customer_customers_tab.set("None")
+                    # Κληση της self.update_picked_customer_to_none() που είναι μέθοδος του appointments_methods.py η οποια
+                    # αλλαζει τα στοιχεια του επιλεγμενου πελατη ωστε να μην υπαρχει επιλεγμενος πελατης μετα την διαγραφη στο αλλο tab
+                    # σε περιπτωση που αυτος που διαγραφτηκε απο το appointments tab ηταν επιλεγμενος και στο customers tab
+                    self.update_selected_customer_apt_tab()
+                self.update_selected_customer_cust_tab()
                 # ανανεωση των κουμπιων
                 self.update_customer_buttons()
+                
         else: # αν υπαρχουν ραντεβου τα οποια ειναι μεταγενεστερα της τωρινης ημερας και ωρας, δεν διαγραφει τον πελατη
             messagebox.showwarning(title="Unable To Delete", message="Cannot delete a customer that has appointments due")
         close_connection(self.connection)
