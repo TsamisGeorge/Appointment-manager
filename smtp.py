@@ -28,7 +28,7 @@ class SMTP_Methods():
             msg['Subject'] = "Appointment Reminder"
             msg['From'] = EMAIL_ADDRESS
             msg['To'] = info[i][2]
-            msg.set_content(f"Mr/Mrs {info[i][0]} {info[i][1]} your appointment is in {info[i][4]} at: {info[i][3]}")
+            msg.set_content(f"Mr/Mrs {info[i][0]} {info[i][1]} your appointment is scheduled for {info[i][4]} at: {info[i][3]}")
 
             with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
                 smtp.login(EMAIL_ADDRESS,EMAIL_PASSWORD) 
