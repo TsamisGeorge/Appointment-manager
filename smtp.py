@@ -10,8 +10,9 @@ EMAIL_PASSWORD=os.environ.get('MAIL_PWD')
 
 
 class SMTP_Methods():
-    #function για retrieve data fm treeview
+
     def extraction_data(self):
+        '''Μέθοδος για "εξαγωγή" των στοιχείων απο το widget treeviewsss'''
         data1=[]
         for item_id in self.tree.get_children():
             data = self.tree.item(item_id)
@@ -21,6 +22,7 @@ class SMTP_Methods():
 
     #function του πλήκτρου send notification
     def send_notification(self):
+        '''Μέθοδος για αποστολή υπενθύμισης-ειδοποιήσης(notification) με email'''
         info=self.extraction_data()
     
         for i in range(len(info)):
