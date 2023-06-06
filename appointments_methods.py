@@ -301,7 +301,7 @@ class Appointment_methods():
                     # του ραντεβου, και ανανεωση των ραντεβου του επιλεγμενου πελατη με χρηση της self.update_customer_appointments()
                     execute_query(self.connection, apt_creation_query)
                     self.connection.commit()
-                    messagebox.showinfo(title="Appointment Scheduled", message = f'''An appointment has been scheduled for customer {current_customer_results[0]['first_name']} {current_customer_results[0]['last_name']} at {apt_date} with duration {int(self.time_picker2.get())} minutes''')
+                    messagebox.showinfo(title="Appointment Scheduled", message = f'''An appointment has been scheduled for customer {current_customer_results[0]['first_name']} {current_customer_results[0]['last_name']} on {apt_date} with a duration of {int(self.time_picker2.get())} minutes''')
                     self.update_customer_appointments()
 
             else: # αν το ραντεβου δεν ειναι valid γιατι εχουν επιστραφη αποτελεσματα στο appointmnents_results
@@ -312,7 +312,7 @@ class Appointment_methods():
                 appointment_time = datetime.strptime(appointmnents_results[0]['appointment_interval'], "%Y-%m-%d %H:%M:%S")
                 appointment_duration = datetime.strptime(appointmnents_results[0]['appointment_date'], "%Y-%m-%d %H:%M:%S")
                 total_seconds = (appointment_time - appointment_duration).total_seconds()
-                messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} for {int(total_seconds//60)} minutes''')
+                messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} with a duration of {int(total_seconds//60)} minutes''')
             close_connection(self.connection)
 
 
@@ -364,14 +364,14 @@ class Appointment_methods():
 
                     # εμφανιση messagebox που αναφερει πως το ραντεβου δημιουργηθηκε επιτυχως και εχει λεπτομεριες του ραντεβου
                     total_seconds = apt_min.total_seconds()
-                    messagebox.showinfo(title="Appointment Rescheduled", message=f"Appointment successfully rescheduled at {apt_date} for {int(total_seconds//60)} minutes")
+                    messagebox.showinfo(title="Appointment Rescheduled", message=f"Appointment successfully rescheduled on {apt_date} with a duration of {int(total_seconds//60)} minutes")
 
             else: # αν το ραντεβου δεν ειναι valid(υπαρχουν ραντεβου στο appointmnents_results)
                 appointment_time = datetime.strptime(appointmnents_results[0]['appointment_interval'], "%Y-%m-%d %H:%M:%S")
                 appointment_duration = datetime.strptime(appointmnents_results[0]['appointment_date'], "%Y-%m-%d %H:%M:%S")
                 # εμφανιση messagebox που αναφερει πως υπαρχει ηδη ραντεβου στις επιλεγμενες ωρες με λεπτομεριες του ραντεβου
                 total_seconds = (appointment_time - appointment_duration).total_seconds()
-                messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} for {int(total_seconds//60)} minutes''')
+                messagebox.showwarning(title="Appointment Time Taken", message=f'''There's already an appointment set on {appointmnents_results[0]['appointment_date']} with a duration of {int(total_seconds//60)} minutes''')
 
 
 

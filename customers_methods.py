@@ -2,11 +2,12 @@
 # METHODS TO WORK WITH THE WIDGETS ON THE CUSTOMERS TAB #
 # ----------------------------------------------------- #
 
+import re
+import dns.resolver
 import tkinter as tk
 import tkinter.messagebox as messagebox
 from db_tools import open_connection,close_connection,fetch_all_dict_list,execute_query
 from datetime import datetime
-from email_validator import validate_email
 
 class Customers_methods():
     '''Η κλάση αυτή δίνει τις μεθόδους διαχείρισης ενός πελάτη, κλειρονομείται απο την κλάση Appointment_manager()'''
@@ -23,6 +24,34 @@ class Customers_methods():
         '''Μεθοδος ενημερωσης των widget ενος επιλεγμενου πελατη στο customers_tab'''
         self.selected_customer_customers_tab.set("None")
         self.selected_customer_phone_number_customers_tab = 0
+
+    def validate_email(self,address):
+        '''Μέθοδος επιβεβαίωσης ενός εισαγόμενου email
+
+        Ορίσματα:
+        
+        address: (str) Διεύθυνση Email
+        
+        Επιστρέφει:
+        
+        1(int): Αν η διεύθυνση email είναι έγκυρη, όχι ως προς ύπαρξης της διεύθυνσης, αλλα ως προς μορφής και ύπαρξης του domain name και του top level domain
+
+        The email address is not valid(str): Αν δεν υπάρχει ή δεν είναι έγκυρο είτε το domain name ή το top level domain
+
+        The email format is not valid(str): Αν δεν είναι έγκυρη η μορφή της διευθυνσης, με βάση το regex ^[\w\.-]+@[\w\.-]+\.[A-Za-z]{2,}$'''
+
+        valid_regex = bool(re.match(r'^[\w\.-]+@[\w\.-]+\.[A-Za-z]{2,}$', address))
+        if(valid_regex):
+            domain = address.split('@')[1]
+            try:
+                dns.resolver.resolve(domain, 'MX')
+                return 1
+            except dns.resolver.Timeout:
+                return "Could not verify email validity, check your internet connection"
+            except dns.exception.DNSException:
+                return "The email address is not valid"
+        else:
+            return "The email format is not valid"
 
     def create_customer(self):
         '''Μεθοδος δημιουργιας ενος πελατη'''
@@ -43,8 +72,9 @@ class Customers_methods():
                 raise ValueError(f"'{surname}' is not a valid surname.")
             email = self.email_entry.get().rstrip().lstrip()
             #temp validation, could be done with regex and only smtp
-            if not validate_email(email).email or len(email)> 50:
-                raise ValueError(f"'{email}' is not a valid email.")
+            validated_email = self.validate_email(email)
+            if validated_email != 1 or len(email)> 50:
+                raise ValueError(f"{validated_email}")
             phone_number = self.phone_number_entry.get().lstrip().rstrip()
             if not phone_number.isalnum() or len(phone_number) != 10:
                 raise ValueError(f"'{phone_number}' is not a valid phone number.")
@@ -61,24 +91,26 @@ class Customers_methods():
             if fetch_results:
                 messagebox.showinfo(title="Customer exists",message=f"Customer {fetch_results[0]['first_name']} {fetch_results[0]['last_name']} already exists")
             else:
-                self.connection = open_connection()
-                # Δημιουργια ερωτηματος που θα φερει το τελευταιο client_id απο την βαση δεδομενων
-                # αν υπαρχει επιστρεφομενο client_id στο last_entry_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
-                # τα στοιχεια που πηρε απο τα entries και προσθετει τον πελατη με client_id αυτο που πηρε αυξανομενο κατα 1
-                # αν δεν υπαρχουν καταγραφες τοτε δημιουργει τον πρωτο πελατη με client_id 1
-                last_customer_query = f"SELECT client_id FROM clients ORDER BY client_id desc LIMIT 1"
-                last_entry_id = fetch_all_dict_list(self.connection, last_customer_query)
-                if not last_entry_id:
-                    query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
-                else:
-                    query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
-                execute_query(self.connection, query)
-                self.connection.commit()
-                messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
-                # Κληση της self.clear_customers_entry() αν δημιουργηθει επιτυχως ενας πελατης για να αδιασουν τα entry boxes
-                # και κλεισιμο του connection
-                self.clear_customers_entry()
-                close_connection(self.connection)
+                confirmation = messagebox.askyesno(title="Confirmation", message=f"Are you sure you want to insert {name} {surname} as a customer?")
+                if confirmation:
+                    self.connection = open_connection()
+                    # Δημιουργια ερωτηματος που θα φερει το τελευταιο client_id απο την βαση δεδομενων
+                    # αν υπαρχει επιστρεφομενο client_id στο last_entry_id(υπαρχουν καταγραφες) τοτε δημιουργει query με\
+                    # τα στοιχεια που πηρε απο τα entries και προσθετει τον πελατη με client_id αυτο που πηρε αυξανομενο κατα 1
+                    # αν δεν υπαρχουν καταγραφες τοτε δημιουργει τον πρωτο πελατη με client_id 1
+                    last_customer_query = f"SELECT client_id FROM clients ORDER BY client_id desc LIMIT 1"
+                    last_entry_id = fetch_all_dict_list(self.connection, last_customer_query)
+                    if not last_entry_id:
+                        query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES(1,'{name}','{surname}','{phone_number}','{email}')"
+                    else:
+                        query = f"INSERT INTO clients(client_id, first_name, last_name, phone_number, email) VALUES({int(last_entry_id[0]['client_id']) + 1},'{name}','{surname}','{phone_number}','{email}')"
+                    execute_query(self.connection, query)
+                    self.connection.commit()
+                    messagebox.showinfo(title="Inserted successfully",message=f"Customer {name} {surname} has been inserted successfully")
+                    # Κληση της self.clear_customers_entry() αν δημιουργηθει επιτυχως ενας πελατης για να αδιασουν τα entry boxes
+                    # και κλεισιμο του connection
+                    self.clear_customers_entry()
+                    close_connection(self.connection)
     
     def clear_customers_entry(self):
         '''Μεθοδος για να αδειαζουν τα entry boxes του customers_tab'''
@@ -335,8 +367,9 @@ class Customers_methods():
         # αλλαγη email
         elif button_name == "change email":
             try:
-                if not validate_email(user_input).email or len(user_input) > 50:
-                    raise ValueError
+                validated_email = self.validate_email(user_input)
+                if validated_email != 1 or len(user_input) > 50:
+                    raise ValueError(f"{validated_email}")
                 see_if_email_exists_query = f"SELECT * FROM clients WHERE email = '{user_input}'"
                 see_if_email_exists_results = fetch_all_dict_list(self.connection, see_if_email_exists_query)
                 if not see_if_email_exists_results:
