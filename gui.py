@@ -366,7 +366,7 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.delete_customer_button.place(x=868, y=160)
 
         # Frame και label για να αναδειχθει το πεδιο αλλαγης των στοιχειων ενος πελάτη
-        self.change_customer_information_frame = tk.Frame(self.customers_tab, relief="raised", borderwidth=6, padx=14, pady=1)
+        self.change_customer_information_frame = tk.Frame(self.customers_tab, relief="ridge", borderwidth=6, padx=14, pady=1)
         self.change_customer_information_frame.place(x=556, y=220)
         self.change_customer_information_label = tk.Label(self.change_customer_information_frame, text="Change Selected Customers Information", font=("Segoe UI",11))
         self.change_customer_information_label.pack()
