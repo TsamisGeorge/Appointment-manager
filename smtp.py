@@ -25,15 +25,18 @@ class SMTP_Methods():
         '''Μέθοδος για αποστολή υπενθύμισης-ειδοποιήσης(notification) με email'''
         info=self.extraction_data()
     
-        for i in range(len(info)):
-            msg=EmailMessage()
-            msg['Subject'] = "Appointment Reminder"
-            msg['From'] = EMAIL_ADDRESS
-            msg['To'] = info[i][2]
-            msg.set_content(f"Mr/Mrs {info[i][0]} {info[i][1]} your appointment is scheduled for {info[i][4]} at: {info[i][3]}")
+        if info==[]:
+            show_email_warnn=showwarning(title="Warning",message="No email was sent!")
+        else:
+            for i in range(len(info)):
+                msg=EmailMessage()
+                msg['Subject'] = "Appointment Reminder"
+                msg['From'] = EMAIL_ADDRESS
+                msg['To'] = info[i][2]
+                msg.set_content(f"Mr/Mrs {info[i][0]} {info[i][1]} your appointment is scheduled for {info[i][4]} at: {info[i][3]}")
 
-            with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
-                smtp.login(EMAIL_ADDRESS,EMAIL_PASSWORD) 
-                smtp.send_message(msg)
+                with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
+                    smtp.login(EMAIL_ADDRESS,EMAIL_PASSWORD) 
+                    smtp.send_message(msg)
 
-        show_email_info=showinfo(message='Emails were sent')
+            show_email_info=showinfo(message='Emails were sent')
