@@ -98,7 +98,7 @@ class Search_methods():
         if data==[]:
             show_print_warn=showwarning(title="Warning",message="No appointments to print!")
         else:       
-            file_path=filedialog.asksaveasfilename(defaultextension='.xlsx',initialfile=f'Appointment of {data[0][4]}')
+            file_path=filedialog.asksaveasfilename(defaultextension='.xlsx',initialfile=f'Appointmens-of-{data[0][4]}')
             
             if file_path:
                 self.workbook=xlsxwriter.Workbook(file_path)

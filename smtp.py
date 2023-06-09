@@ -39,4 +39,4 @@ class SMTP_Methods():
                     smtp.login(EMAIL_ADDRESS,EMAIL_PASSWORD) 
                     smtp.send_message(msg)
 
-            show_email_info=showinfo(message='Emails were sent')
+            show_email_info=showinfo(title="Info",message='Emails were sent')

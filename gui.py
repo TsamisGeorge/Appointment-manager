@@ -396,18 +396,18 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
 
         # Label για "Search by dates"
         self.search_by_date_label = tk.Label(self.search_tab, text = "Search by Date", font = ("Segoe UI", 14, "bold"), background="#C0C6C6", foreground="dark blue")
-        self.search_by_date_label.place(x=52,y=10)
+        self.search_by_date_label.place(x=92,y=10)
 
         # Label για "Appointments by dates"
         self.appointments_by_date_label = tk.Label(self.search_tab, text = "Appointments by Date", font = ("Segoe UI", 14, "bold"), background="#C0C6C6", foreground="dark blue")
-        self.appointments_by_date_label.place(x=550,y=10)         
+        self.appointments_by_date_label.place(x=574,y=10)         
 
         #Label υπόδειξης στον χρήστη να επιλέξει μια ημερομηνία (Year, Month, Date) απο τα comboboxes παρακάτω.
-        self.date_label=tk.Label(self.search_tab,text="Peak a date",font=("Segoe UI", 11,"bold"))
+        self.date_label=tk.Label(self.search_tab,text="Pick a date",font=("Segoe UI", 13,"bold"))
         self.date_label.place(x=5,y=55)
 
         # Label "YEAR" και απο κάτω combobox για επιλογή χρονολογίας απο τον χρήστη.
-        self.year_label=tk.Label(self.search_tab,text="Year",font=("Segoe UI", 11))
+        self.year_label=tk.Label(self.search_tab,text="Year",font=("Segoe UI", 12))
         self.year_label.place(x=5,y=80)
         
         #Δημιουργία combobox για επιλογή χρονολογίας(έτους).
@@ -424,11 +424,11 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         # μην μπορεί να γράψει ελευθέρα εκείνος.
         year_cb['state']='readonly'
 
-        year_cb.place(x=5,y=98,width=80)
+        year_cb.place(x=5,y=108,width=80)
 
         # Label "ΜΟΝΤΗ" και απο κάτω combobox για επιλογή μήνα (με αριθμητιή τιμή π.χ 1 για Ιανουάριο) απο τον χρήστη.
-        self.month_label=tk.Label(self.search_tab,text='Month',font=("Segoe UI", 11))
-        self.month_label.place(x=5,y=125)
+        self.month_label=tk.Label(self.search_tab,text='Month',font=("Segoe UI", 12))
+        self.month_label.place(x=5,y=136)
 
         #Δημιουργία combobox για επιλογή μήνα.
         selected_month=tk.StringVar()
@@ -441,11 +441,11 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         # μην μπορεί να γράψει ελευθέρα εκείνος.
         month_cb['state']='readonly'
 
-        month_cb.place(x=5,y=145,width=60)
+        month_cb.place(x=5,y=164,width=60)
 
         # Label "DAY" και απο κάτω combobox για επιλογή ημέρας (με αριθμητιή τιμή π.χ 1-31 ή 1-30) απο τον χρήστη.
         self.day_label=tk.Label(self.search_tab,text="Day",font=("Segoe UI", 11))
-        self.day_label.place(x=5,y=172)
+        self.day_label.place(x=5,y=192)
 
         #Δημιουργία combobox για επιλογή ημέρας.
         selected_day=tk.StringVar()
@@ -458,12 +458,12 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         # και να μην μπορεί να γράψει ελευθέρα εκείνος.
         day_cb['state']='readonly'
 
-        day_cb.place(x=5,y=192,width=60)
+        day_cb.place(x=5,y=220,width=60)
 
         # Button "Search" ώστε να καλείται η function 'confirmation_button' με ορίσματα τις επιλογές του χρήστη
         # στα comboboxes YEAR,MONTH,DAY       
-        confirm_button=tk.Button(self.search_tab,bg='Steel Blue',text="Search",command=lambda:self.confirmation_button(year_cb.get(),month_cb.get(),day_cb.get()))
-        confirm_button.place(x=5,y=305)
+        confirm_button=tk.Button(self.search_tab,bg='Steel Blue',text="Search", font=("Segue UI", 10),command=lambda:self.confirmation_button(year_cb.get(),month_cb.get(),day_cb.get()))
+        confirm_button.place(x=5,y=270)
 
         # Εισαγωγή widget treeview όπου θα απεικονίζονται σε στήλες οι πληροφορίες των ραντεβού για
         # την ημερομηνία που έχει επιλεγεί.
@@ -498,7 +498,7 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
 
         # Button "Send Email" ώστε να καλείται η function "send_notification" και να αποστέλεται ειδοποίηση
         # μέσω email στους πελάτες με ραντεβού την επιλεγμένη ημέρα.
-        self.notification_button=tk.Button(self.search_tab,bg='Steel Blue',text="Send Email",command=self.send_notification)
+        self.notification_button=tk.Button(self.search_tab,bg='Steel Blue',text="Send Email", font=("Segue UI", 10),command=self.send_notification)
         self.notification_button.place(x=380,y=305)
 
 
@@ -508,8 +508,8 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
 
         # Button "Print Appointments" ώστε να καλείται η function 'print_appointment' και να αποθηκεύονται σε αρχειο .xlsx
         # τα στοιχεία των πελατών με ραντεβού την συγκεκριμένη ημερομηνία.
-        self.print_button=tk.Button(self.search_tab,bg='Steel Blue',text='Print Appointments',command=self.print_appointment)
-        self.print_button.place(x=840,y=305)
+        self.print_button=tk.Button(self.search_tab,bg='Steel Blue', font=("Segue UI", 10),text='Print Appointments',command=self.print_appointment)
+        self.print_button.place(x=858,y=305)
 
 
         # -------- #
