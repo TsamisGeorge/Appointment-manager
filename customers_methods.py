@@ -405,3 +405,4 @@ class Customers_methods():
             else:
                 messagebox.showwarning(title="Invalid Phone Number", message=f"'{user_input}' is not a valid phone number")
         close_connection(self.connection)
+        self.change_customer_info_window.destroy()
