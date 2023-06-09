@@ -271,8 +271,8 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
 
         # Κουμπι που κανει κληση της self.create_appointment για να αρχισουν τα τεστ λογικης ωστε να επαληθευτει αν ειναι
         # εγκυρο το ραντεβου η οχι και να δημιουργηθει 
-        self.create_apt_button = tk.Button(self.appointments_tab, bg='Steel Blue', font = ("Segoe UI",12), text = "Create", command = self.create_appointment, state="disabled",width=14,height=0, relief="sunken")
-        self.create_apt_button.place(x = 260, y = 380)
+        self.create_apt_button = tk.Button(self.appointments_tab,height = 0,width = 18, bg='Steel Blue', font = ("Segoe UI",11), text = "Create", command = self.create_appointment,state="disabled",relief="sunken")
+        self.create_apt_button.place(x = 254, y = 380)
 
         # Label για την πλευρα του Manage Appointments πανω στο appointments_tab
         self.search_customer_label = tk.Label(self.appointments_tab, text = "Manage Appointments", font=("Segoe UI", 14, "bold"), bg='Steel Blue', background="#C0C6C6", foreground="dark blue")
