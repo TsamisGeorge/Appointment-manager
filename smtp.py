@@ -2,6 +2,7 @@
 
 import os
 import smtplib
+import socket
 from email.message import EmailMessage
 from search_methods import *
 
@@ -28,15 +29,20 @@ class SMTP_Methods():
         if info==[]:
             show_email_warnn=showwarning(title="Warning",message="No email was sent!")
         else:
-            for i in range(len(info)):
-                msg=EmailMessage()
-                msg['Subject'] = "Appointment Reminder"
-                msg['From'] = EMAIL_ADDRESS
-                msg['To'] = info[i][2]
-                msg.set_content(f"Mr/Mrs {info[i][0]} {info[i][1]} your appointment is scheduled for {info[i][4]} at: {info[i][3]}")
+            try:
+                for i in range(len(info)):
+                    msg=EmailMessage()
+                    msg['Subject'] = "Appointment Reminder"
+                    msg['From'] = EMAIL_ADDRESS
+                    msg['To'] = info[i][2]
+                    msg.set_content(f"Mr/Mrs {info[i][0]} {info[i][1]} your appointment is scheduled for {info[i][4]} at: {info[i][3]}")
 
-                with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
-                    smtp.login(EMAIL_ADDRESS,EMAIL_PASSWORD) 
-                    smtp.send_message(msg)
+                    with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
+                        smtp.login(EMAIL_ADDRESS,EMAIL_PASSWORD) 
+                        smtp.send_message(msg)
 
-            show_email_info=showinfo(title="Info",message='Emails were sent')
+                show_email_info=showinfo(message='Emails were sent')
+            except socket.gaierror:
+                show_email_warn=showwarning(title="Warning",message="Failed to send Emails!")
+            except smtplib.SMTPException:
+                show_email_warning=showwarning(title="Warning",message="Failed to send Emails!")
