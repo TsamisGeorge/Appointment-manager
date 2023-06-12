@@ -26,7 +26,8 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         # με τις εικονες, με χρήση της .iconphoto της tk
         self.main_window = tk.Tk()
         self.main_window.title("Appointment Manager")
-        icon = tk.PhotoImage(file="pics/appointment_manager.png")
+        icon = Image.open("pics/appointment_manager.ico")
+        icon = ImageTk.PhotoImage(icon)
         self.main_window.iconphoto(True, icon)
         
         # Φτιαχνουμε τις διαστασεις του παραθυρου σε 1000 x 560
