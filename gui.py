@@ -190,7 +190,7 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         self.search_customer_entry = tk.Entry(self.appointments_tab, width= 50)
         self.search_customer_entry.place(x=50, y=105)
         # το κουμπι search_customer_button οταν πατηθεί καλεί την self.search_customer_apt_tab συνάρτηση
-        self.search_customer_button = tk.Button(self.appointments_tab, compound=tk.LEFT, image=searching_customer_img, command=self.search_customer_apt_tab)
+        self.search_customer_button = tk.Button(self.appointments_tab, image=searching_customer_img, command=self.search_customer_apt_tab)
         self.search_customer_button.place(x=364, y=100)
         # binding του enter με το self.search_customer_entry, ωστε αν πατηθει ενω ειναι highlighted το entry της αναζητησης ενος πελατη
         # στο appointments_tab να καλειται η ιδια συναρτηση self.search_customer_apt_tab 
@@ -223,7 +223,7 @@ class Appointment_manager(Appointment_methods, Customers_methods,Search_methods,
         # απο το μεγεθος του Listbox, το scrollbar ειναι οριζοντιο, με χρήση του command=self.selected_customer_appointments_listbox.yview
         # καθε φορα που κουνιεται το scrollbar απο τον χρηστη αλλαζει την οψη του listbox ως προς τον y αξονα
         # και ορισμα σαν yscrollcommand του Listbox το self.scrollbar.set ωστε να λειτουργει κανονικα
-        self.scrollbar = tk.Scrollbar(self.appointments_tab, orient="vertical", background="red", troughcolor="blue")
+        self.scrollbar = tk.Scrollbar(self.appointments_tab)
         self.scrollbar.config(command=self.selected_customer_appointments_listbox.yview)
         self.scrollbar.place(x=882, y=106, height=182)
         self.selected_customer_appointments_listbox.config(yscrollcommand=self.scrollbar.set)
