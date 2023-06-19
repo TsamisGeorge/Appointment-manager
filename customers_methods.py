@@ -87,9 +87,12 @@ class Customers_methods():
         # φερει τιποτα σημαινει πως δεν υπαρχει πελατης, οποτε συνεχιζει με την εκτελεση
         # αλλιως βγαζει μυνημα λαθους σε μορφη messagebox και κλεινει το connection
         if valid_info:
-            fetch_results = self.bring_curr_cust_cust_tab()
-            if fetch_results:
-                messagebox.showinfo(title="Customer exists",message=f"Customer {fetch_results[0]['first_name']} {fetch_results[0]['last_name']} already exists")
+            self.connection = open_connection()
+            query = f"SELECT * FROM Clients WHERE email = '{email}' OR phone_number = '{phone_number}'"
+            customer_exists = fetch_all_dict_list(self.connection, query)
+            close_connection(self.connection)
+            if customer_exists:
+                messagebox.showinfo(title="Customer exists",message=f"Customer {customer_exists[0]['first_name']} {customer_exists[0]['last_name']} already exists")
             else:
                 confirmation = messagebox.askyesno(title="Confirmation", message=f"Are you sure you want to insert {name} {surname} as a customer?")
                 if confirmation:
